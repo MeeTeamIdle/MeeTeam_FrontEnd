@@ -26,10 +26,15 @@ import {
 	recruitFilterState,
 	signupModalState,
 } from '../../../atom';
-import { getPostList } from '../../../service/recruit/board';
-import { useQuery } from '@tanstack/react-query';
 import { useFixModalBackground, useFocusToTop, useLogin, useOutsideClick } from '../../../hooks';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import {
+	useLoaderData,
+	useLocation,
+	useNavigate,
+	useRouteLoaderData,
+	useSearchParams,
+} from 'react-router-dom';
+import { ListResult } from '../../../types';
 
 const RecruitPage = () => {
 	const navigate = useNavigate();
@@ -64,10 +69,16 @@ const RecruitPage = () => {
 	const [needLoginModal, setNeedLoginModal] = useRecoilState(needLoginModalState);
 	const [signupModalOpen, setSignupModalOpen] = useRecoilState(signupModalState);
 
-	const { data, isLoading } = useQuery({
-		queryKey: ['recruit_board', { filterState, page }],
-		queryFn: () => getPostList({ filterState, page }),
-	});
+	// !! 임시 주석 처리
+	// const { data } = useQuery({
+	// 	queryKey: ['recruit_board', { filterState, page }],
+	// 	queryFn: () => getPostList({ filterState, page }),
+	// 	enabled: !!isLogin,
+	// });
+
+	const recruitData = useLoaderData() as ListResult;
+	const schoolData = useRouteLoaderData('school') as ListResult;
+	const data: ListResult = location.pathname === '/' ? recruitData : schoolData;
 
 	const onClickDetailed = (event: React.MouseEvent) => {
 		event.stopPropagation();
@@ -358,16 +369,12 @@ const RecruitPage = () => {
 								<img src={FilledBookmark} alt='bookmark-icon' />
 								<span className='body2'>북마크 모아보기 {'❯'}</span>
 							</article>
-							{isLoading ? (
-								<section></section>
-							) : (
-								data && (
-									<section className='container-contents__grid'>
-										{data.posts.map(post => (
-											<RecruitCard {...post} key={post.id} />
-										))}
-									</section>
-								)
+							{data && (
+								<section className='container-contents__grid'>
+									{data.posts.map(post => (
+										<RecruitCard {...post} key={post.id} />
+									))}
+								</section>
 							)}
 							{data && data.posts.length === 0 && (
 								<section className='no-results'>

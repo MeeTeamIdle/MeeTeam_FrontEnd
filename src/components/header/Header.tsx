@@ -32,7 +32,7 @@ const Header = () => {
 	const handleRecruitBoardButtonClick = () => {
 		navigate('/');
 		setFilterState({
-			scope: 0,
+			scope: 1,
 			category: null,
 			field: null,
 			skill: [],
@@ -47,7 +47,7 @@ const Header = () => {
 	const navigateToMySchool = () => {
 		navigate('/school');
 		setFilterState({
-			scope: 1,
+			scope: 2,
 			category: null,
 			field: null,
 			skill: [],

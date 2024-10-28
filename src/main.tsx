@@ -27,12 +27,22 @@ import {
 	AccountSetting,
 } from './pages/index.ts';
 import './globalStyle.css';
-import { getPostList } from './service/recruit/board.ts';
+import { getAuthPostList, getPostList } from './service/recruit/board.ts';
 import { FilterData } from './types/index.ts';
 
-const filterState: FilterData = {
+const publicFilterState: FilterData = {
 	field: null,
-	scope: null,
+	scope: 1,
+	category: null,
+	keyword: null,
+	skill: undefined,
+	role: undefined,
+	tag: undefined,
+};
+
+const authFilterState: FilterData = {
+	field: null,
+	scope: 2,
 	category: null,
 	keyword: null,
 	skill: undefined,
@@ -49,13 +59,17 @@ const router = createBrowserRouter([
 				path: '',
 				element: <RecruitPage />,
 				loader: () => {
-					return getPostList({ filterState: filterState, page: 1 });
+					return getPostList({ filterState: publicFilterState, page: 1 });
 				},
 			},
 			{
 				path: 'school',
 				element: <PrivateRouter />,
 				children: [{ path: '', element: <RecruitPage /> }],
+				id: 'school',
+				loader: () => {
+					return getAuthPostList({ filterState: authFilterState, page: 1 });
+				},
 			},
 			{
 				path: 'recruitment/postings/:id',

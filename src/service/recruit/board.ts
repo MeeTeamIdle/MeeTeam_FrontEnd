@@ -10,6 +10,7 @@ export const getPostList = async ({ filterState, page }: FilterItem) => {
 	try {
 		const response = await axiosInstance.get<ListResult>(EndPoint.RECRUITMENT_BOARD.list, {
 			params: {
+				scope: 1,
 				skill: filterState.skill,
 				role: filterState.role,
 				tag: filterState.tag,
@@ -27,6 +28,7 @@ export const getAuthPostList = async ({ filterState, page }: FilterItem) => {
 	try {
 		const response = await axiosAuthInstance.get<ListResult>(EndPoint.RECRUITMENT_BOARD.list, {
 			params: {
+				scope: 2,
 				skill: filterState.skill,
 				role: filterState.role,
 				tag: filterState.tag,
