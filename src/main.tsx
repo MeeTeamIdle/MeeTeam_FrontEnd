@@ -53,6 +53,11 @@ const router = createBrowserRouter([
 				},
 			},
 			{
+				path: 'school',
+				element: <PrivateRouter />,
+				children: [{ path: '', element: <RecruitPage /> }],
+			},
+			{
 				path: 'recruitment/postings/:id',
 				element: <RecruitDetailPage />,
 			},

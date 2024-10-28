@@ -47,7 +47,6 @@ const RecruitPage = () => {
 			value: '분야를 선택해주세요',
 		},
 	});
-	const [isFocused, setIsFocused] = useState(false);
 	const [placeholderText, setPlaceholderText] = useState('제목을 검색해보세요.');
 	const [page, setPage] = useRecoilState<number>(pageState);
 	const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -66,8 +65,8 @@ const RecruitPage = () => {
 	const [signupModalOpen, setSignupModalOpen] = useRecoilState(signupModalState);
 
 	const { data, isLoading } = useQuery({
-		queryKey: ['recruit_board', { filterState, isLogin, page }],
-		queryFn: () => getPostList({ filterState, isLogin, page }),
+		queryKey: ['recruit_board', { filterState, page }],
+		queryFn: () => getPostList({ filterState, page }),
 	});
 
 	const onClickDetailed = (event: React.MouseEvent) => {
@@ -223,12 +222,10 @@ const RecruitPage = () => {
 	};
 
 	const handleFocusedPlaceholder = () => {
-		setIsFocused(true);
 		setPlaceholderText('검색어 입력');
 	};
 
 	const handleBlurredPlaceholder = () => {
-		setIsFocused(true);
 		setPlaceholderText('제목을 검색해보세요.');
 	};
 

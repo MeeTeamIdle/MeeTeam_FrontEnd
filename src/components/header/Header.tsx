@@ -2,40 +2,37 @@ import React, { useEffect, useState, useRef } from 'react';
 import S from './Header.styled';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { DropdownArrow } from '../../assets';
-import { ProfileImage, WaitModal } from '..';
+import { ModalBackground, NeedLogin, ProfileImage } from '..';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { recruitFilterState, userState, waitModalState, loginState } from '../../atom';
-import {
-	useSignOut,
-	useLogin,
-	useReadProfileImage,
-	useOutsideClick,
-	useFixModalBackground,
-} from '../../hooks';
+import { recruitFilterState, userState, loginState, needLoginModalState } from '../../atom';
+import { useSignOut, useLogin, useReadProfileImage, useOutsideClick } from '../../hooks';
 
 const Header = () => {
-	const navigate = useNavigate();
 	const { id } = useParams();
-	const location = useLocation();
 	const { isLogin } = useLogin();
-	const setLoginState = useSetRecoilState(loginState);
-	const [userInfo, setUserState] = useRecoilState(userState);
+	const location = useLocation();
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
+	const navigate = useNavigate();
+
 	const [openDrop, setOpenDrop] = useState<boolean>(false);
-	const setFilterState = useSetRecoilState(recruitFilterState);
-	const [isWait, setIsWait] = useRecoilState(waitModalState);
 	const [isHere, setIsHere] = useState({
 		recruit: false,
-		galary: false,
+		mySchool: false,
 		inform: false,
 	});
+	const [userInfo, setUserState] = useRecoilState(userState);
+	const [needLoginModal, setNeedLoginModal] = useRecoilState(needLoginModalState);
+
+	const setFilterState = useSetRecoilState(recruitFilterState);
+	const setLoginState = useSetRecoilState(loginState);
+
 	const { mutate: signOut } = useSignOut({ setUserState, setLoginState });
 	const { data: profileImage } = useReadProfileImage(isLogin);
 
-	const goRecruit = () => {
+	const handleRecruitBoardButtonClick = () => {
 		navigate('/');
 		setFilterState({
-			scope: null,
+			scope: 0,
 			category: null,
 			field: null,
 			skill: [],
@@ -47,8 +44,19 @@ const Header = () => {
 		});
 	};
 
-	const goGalary = () => {
-		setIsWait(true);
+	const navigateToMySchool = () => {
+		navigate('/school');
+		setFilterState({
+			scope: 1,
+			category: null,
+			field: null,
+			skill: [],
+			role: [],
+			tag: [],
+			keyword: '',
+			course: null,
+			professor: null,
+		});
 	};
 
 	const onClickMy = () => {
@@ -65,14 +73,23 @@ const Header = () => {
 		setOpenDrop(false);
 	};
 
+	const handleMySchoolButtonClick = () => {
+		if (isLogin) {
+			navigateToMySchool();
+		} else {
+			setNeedLoginModal({ isOpen: true, type: 'SCHOOL_RECRUIT' });
+		}
+	};
+
 	useOutsideClick(dropdownRef, openDrop, setOpenDrop);
-	useFixModalBackground(isWait);
 
 	useEffect(() => {
 		if (location.pathname === `/recruitment/postings/${id}` || location.pathname === '/') {
-			setIsHere({ recruit: true, galary: false, inform: false });
+			setIsHere({ recruit: true, mySchool: false, inform: false });
+		} else if (location.pathname === '/school') {
+			setIsHere({ recruit: false, mySchool: true, inform: false });
 		} else {
-			setIsHere({ recruit: false, galary: false, inform: false });
+			setIsHere({ recruit: false, mySchool: false, inform: false });
 		}
 	}, [location.pathname, id]);
 
@@ -80,7 +97,7 @@ const Header = () => {
 		<S.Header $isLogin={isLogin}>
 			<div className='header'>
 				<section className='header-leftside'>
-					<div className='header__logo' onClick={goRecruit}>
+					<div className='header__logo' onClick={handleRecruitBoardButtonClick}>
 						<img
 							className='logo'
 							src='/logo_typo_large.webp'
@@ -94,15 +111,15 @@ const Header = () => {
 					<div className='header__navigation'>
 						<div
 							className={`header__navigation--navi-text ${isHere.recruit ? 'here' : ''}`}
-							onClick={goRecruit}
+							onClick={handleRecruitBoardButtonClick}
 						>
 							구인게시판
 						</div>
 						<div
-							className={`header__navigation--navi-text ${isHere.galary ? 'here' : ''}`}
-							onClick={goGalary}
+							className={`header__navigation--navi-text ${isHere.mySchool ? 'here' : ''}`}
+							onClick={handleMySchoolButtonClick}
 						>
-							밋팀갤러리
+							교내게시판
 						</div>
 					</div>
 				</section>
@@ -169,10 +186,10 @@ const Header = () => {
 					</div>
 				</section>
 			</div>
-			{isWait && (
-				<section className='modal-background'>
-					<WaitModal />
-				</section>
+			{needLoginModal.isOpen && (
+				<ModalBackground>
+					<NeedLogin type={needLoginModal.type} />
+				</ModalBackground>
 			)}
 		</S.Header>
 	);
