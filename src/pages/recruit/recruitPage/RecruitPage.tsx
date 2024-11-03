@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	Dropdown,
 	Pagination,
@@ -24,6 +24,7 @@ import {
 	pageState,
 	previousLocationState,
 	recruitFilterState,
+	recruitFilterStateAuth,
 	signupModalState,
 } from '../../../atom';
 import { useFixModalBackground, useFocusToTop, useLogin, useOutsideClick } from '../../../hooks';
@@ -31,15 +32,30 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { getAuthPostList, getPostList } from '../../../service/recruit/board';
 import { useQuery } from '@tanstack/react-query';
 
+const commonInitialFilterState = {
+	category: null,
+	field: null,
+	skill: [],
+	role: [],
+	tag: [],
+	keyword: '',
+	course: null,
+	professor: null,
+};
+
 const RecruitPage = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { isLogin } = useLogin();
 	const fieldRef = useRef<HTMLDivElement | null>(null);
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
-	const [searchKeyword, setSearchKeyword] = useState('');
+	const { isLogin } = useLogin();
+
+	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [searchKeyword, setSearchKeyword] = useState<string>('');
+	const [isFieldOpen, setIsFieldOpen] = useState<boolean>(false);
 	const [isDetailSelected, setIsDetailSelected] = useState(false);
 	const [isFloatingOpen, setIsFloatingOpen] = useState<boolean>(false);
+	const [placeholderText, setPlaceholderText] = useState('제목을 검색해보세요.');
 	const [fieldValue, setFieldValue] = useState({
 		applied: false,
 		value: {
@@ -47,30 +63,29 @@ const RecruitPage = () => {
 			value: '분야를 선택해주세요',
 		},
 	});
-	const [placeholderText, setPlaceholderText] = useState('제목을 검색해보세요.');
-	const [page, setPage] = useRecoilState<number>(pageState);
-	const [isOpen, setIsOpen] = useState<boolean>(false);
-	const [isFieldOpen, setIsFieldOpen] = useState<boolean>(false);
-	const [filterState, setFilterState] = useRecoilState(recruitFilterState);
-	const setDetailedFilterState = useSetRecoilState(detailedFilterState);
-	const setPreviousLocationState = useSetRecoilState(previousLocationState);
 	const [isOpenDetail, setIsOpenDetail] = useState({
 		skill: true,
 		role: false,
 		tag: false,
 		message: '기술',
 	});
-	const [searchParams, setSearchParams] = useSearchParams();
+
+	const [page, setPage] = useRecoilState<number>(pageState);
+	const [filterState, setFilterState] = useRecoilState(recruitFilterState);
+	const [filterStateAuth, setFilterStateAuth] = useRecoilState(recruitFilterStateAuth);
+	const setDetailedFilterState = useSetRecoilState(detailedFilterState);
+	const setPreviousLocationState = useSetRecoilState(previousLocationState);
 	const [needLoginModal, setNeedLoginModal] = useRecoilState(needLoginModalState);
 	const [signupModalOpen, setSignupModalOpen] = useRecoilState(signupModalState);
+	const [searchParams, setSearchParams] = useSearchParams();
 
 	const { data: posts } = useQuery({
-		queryKey: [location.pathname],
+		queryKey: [location.pathname, { filterState, page }],
 		queryFn: async () => {
 			if (location.pathname === '/') {
 				return await getPostList({ filterState, page });
 			} else if (location.pathname === '/school') {
-				return await getAuthPostList({ filterState, page });
+				return await getAuthPostList({ filterState: filterStateAuth, page });
 			}
 		},
 	});
@@ -96,17 +111,19 @@ const RecruitPage = () => {
 		setSearchParams(searchParams);
 	};
 
-	const onClickClear = () => {
-		setFilterState({
-			category: null,
-			field: null,
-			skill: [],
-			role: [],
-			tag: [],
-			keyword: '',
-			course: null,
-			professor: null,
-		});
+	const onClickClear = useCallback(() => {
+		if (location.pathname === '/') {
+			setFilterState({
+				scope: 1,
+				...commonInitialFilterState,
+			});
+		} else if (location.pathname === '/school') {
+			setFilterStateAuth({
+				scope: 2,
+				...commonInitialFilterState,
+			});
+		}
+
 		setSearchKeyword('');
 		setDetailedFilterState({ skill: [], role: [], tag: [] });
 		setSearchParams(searchParams);
@@ -121,7 +138,14 @@ const RecruitPage = () => {
 		searchParams.delete('professor');
 		setIsDetailSelected(false);
 		setSearchParams(searchParams);
-	};
+	}, [
+		location.pathname,
+		searchParams,
+		setSearchParams,
+		setDetailedFilterState,
+		setFilterState,
+		setFilterStateAuth,
+	]);
 
 	const closeHandler = () => {
 		setIsOpen(false);
@@ -290,19 +314,34 @@ const RecruitPage = () => {
 			professor: searchParams.get('professor'),
 		};
 
-		setFilterState({
-			category: queryParams.category ? Number(queryParams.category) : null,
-			skill: queryParams.skill ? queryParams.skill : [],
-			role: queryParams.role ? queryParams.role : [],
-			tag: queryParams.tag ? queryParams.tag : [],
-			keyword: queryParams.keyword ? queryParams.keyword : '',
-			field: queryParams.field ? Number(queryParams.field) : null,
-			course: queryParams.course ? Number(queryParams.course) : null,
-			professor: queryParams.professor ? Number(queryParams.professor) : null,
-		});
+		if (location.pathname === '/') {
+			setFilterState({
+				scope: 1,
+				category: queryParams.category ? Number(queryParams.category) : null,
+				skill: queryParams.skill ? queryParams.skill : [],
+				role: queryParams.role ? queryParams.role : [],
+				tag: queryParams.tag ? queryParams.tag : [],
+				keyword: queryParams.keyword ? queryParams.keyword : '',
+				field: queryParams.field ? Number(queryParams.field) : null,
+				course: queryParams.course ? Number(queryParams.course) : null,
+				professor: queryParams.professor ? Number(queryParams.professor) : null,
+			});
+		} else if (location.pathname === '/school') {
+			setFilterStateAuth({
+				scope: 2,
+				category: queryParams.category ? Number(queryParams.category) : null,
+				skill: queryParams.skill ? queryParams.skill : [],
+				role: queryParams.role ? queryParams.role : [],
+				tag: queryParams.tag ? queryParams.tag : [],
+				keyword: queryParams.keyword ? queryParams.keyword : '',
+				field: queryParams.field ? Number(queryParams.field) : null,
+				course: queryParams.course ? Number(queryParams.course) : null,
+				professor: queryParams.professor ? Number(queryParams.professor) : null,
+			});
+		}
 
 		setSearchKeyword(queryParams.keyword || '');
-	}, [searchParams, setFilterState]);
+	}, [searchParams, setFilterState, setFilterStateAuth, location.pathname]);
 
 	return (
 		<>

@@ -3,17 +3,16 @@ import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import {
-	RecruitPage,
-	RecruitCreatePage,
-	RecruitDetailPage,
-	PortfolioDetailsPage,
-	PortfolioEditPage,
-	SignInPage,
-} from './pages/index.ts';
+import { RecruitPage, SignInPage } from './pages/index.ts';
 import './globalStyle.css';
 import { CircularProgress } from '@mui/material';
 
+const RecruitCreatePage = React.lazy(
+	() => import('./pages/recruit/recruitCreatePage/RecruitCreatePage')
+);
+const RecruitDetailPage = React.lazy(
+	() => import('./pages/recruit/recruitDetailPage/RecruitDetailPage')
+);
 const ApplierManagePage = React.lazy(
 	() => import('./pages/recruit/applierManagePage/ApplierManagePage')
 );
@@ -44,6 +43,10 @@ const RecruitPostingApply = React.lazy(
 const RecruitMyPostings = React.lazy(
 	() => import('./pages/recruit/recruitManagePage/RecruitMyPostings')
 );
+const PortfolioDetailsPage = React.lazy(
+	() => import('./pages/portfolio/details/PortfolioDetailsPage')
+);
+const PortfolioEditPage = React.lazy(() => import('./pages/portfolio/edit/PortfolioEditPage'));
 const PortfolioManagementPage = React.lazy(
 	() => import('./pages/portfolio/management/PortfolioManagmentPage')
 );
