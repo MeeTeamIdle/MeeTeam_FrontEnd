@@ -1,54 +1,51 @@
-import React from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import {
 	RecruitPage,
-	GalaryPage,
 	RecruitCreatePage,
 	RecruitDetailPage,
-	SignInPage,
-	SchoolCertificationPage,
-	NicknameSettingPage,
-	PassWordFindingPage,
-	ProfileDetailsPage,
-	ProfileEditPage,
 	PortfolioDetailsPage,
 	PortfolioEditPage,
-	ApplierManagePage,
-	RecruitManageWrapper,
-	RecruitPostingBookmark,
-	RecruitPostingApply,
-	RecruitMyPostings,
-	CompleteSignUpPage,
-	PrivateRouter,
-	PortfolioManagementPage,
-	NotFound,
-	AccountSetting,
+	SignInPage,
 } from './pages/index.ts';
 import './globalStyle.css';
-import { getAuthPostList, getPostList } from './service/recruit/board.ts';
-import { FilterData } from './types/index.ts';
 
-const publicFilterState: FilterData = {
-	field: null,
-	scope: 1,
-	category: null,
-	keyword: null,
-	skill: undefined,
-	role: undefined,
-	tag: undefined,
-};
-
-const authFilterState: FilterData = {
-	field: null,
-	scope: 2,
-	category: null,
-	keyword: null,
-	skill: undefined,
-	role: undefined,
-	tag: undefined,
-};
+const ApplierManagePage = React.lazy(
+	() => import('./pages/recruit/applierManagePage/ApplierManagePage')
+);
+const SchoolCertificationPage = React.lazy(
+	() => import('./pages/account/schoolCertification/SchoolCertificationPage')
+);
+const NicknameSettingPage = React.lazy(
+	() => import('./pages/account/nicknameSetting/NicknameSettingPage')
+);
+const PassWordFindingPage = React.lazy(
+	() => import('./pages/account/passWordFindingPage/PassWordFindingPage')
+);
+const CompleteSignUpPage = React.lazy(() => import('./pages/account/complete/CompleteSignUpPage'));
+const ProfileDetailsPage = React.lazy(() => import('./pages/profile/details/ProfileDetailsPage'));
+const ProfileEditPage = React.lazy(() => import('./pages/profile/edit/ProfileEditPage'));
+const NotFound = React.lazy(() => import('./pages/notFound/NotFound'));
+const AccountSetting = React.lazy(() => import('./pages/account/accountSetting/AccountSetting'));
+const PrivateRouter = React.lazy(() => import('./pages/routes/PrivateRouter'));
+const RecruitManageWrapper = React.lazy(
+	() => import('./pages/recruit/recruitManagePage/RecruitManageWrapper')
+);
+const RecruitPostingBookmark = React.lazy(
+	() => import('./pages/recruit/recruitManagePage/RecruitPostingBookmark')
+);
+const RecruitPostingApply = React.lazy(
+	() => import('./pages/recruit/recruitManagePage/RecruitPostingApply')
+);
+const RecruitMyPostings = React.lazy(
+	() => import('./pages/recruit/recruitManagePage/RecruitMyPostings')
+);
+const PortfolioManagementPage = React.lazy(
+	() => import('./pages/portfolio/management/PortfolioManagmentPage')
+);
 
 const router = createBrowserRouter([
 	{
@@ -57,19 +54,25 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: '',
-				element: <RecruitPage />,
-				loader: () => {
-					return getPostList({ filterState: publicFilterState, page: 1 });
-				},
+				element: (
+					<Suspense fallback={<div>Loading...</div>}>
+						<RecruitPage />
+					</Suspense>
+				),
 			},
 			{
 				path: 'school',
 				element: <PrivateRouter />,
-				children: [{ path: '', element: <RecruitPage /> }],
-				id: 'school',
-				loader: () => {
-					return getAuthPostList({ filterState: authFilterState, page: 1 });
-				},
+				children: [
+					{
+						path: '',
+						element: (
+							<Suspense fallback={<div>Loading...</div>}>
+								<RecruitPage />
+							</Suspense>
+						),
+					},
+				],
 			},
 			{
 				path: 'recruitment/postings/:id',
@@ -79,10 +82,6 @@ const router = createBrowserRouter([
 				path: 'recruitment/applicants/:id',
 				element: <PrivateRouter />,
 				children: [{ path: '', element: <ApplierManagePage /> }],
-			},
-			{
-				path: 'galary',
-				element: <GalaryPage />,
 			},
 			{
 				path: 'signin',

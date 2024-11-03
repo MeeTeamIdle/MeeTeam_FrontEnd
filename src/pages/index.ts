@@ -1,6 +1,5 @@
 import MainPage from './MainPage';
 import RecruitPage from './recruit/recruitPage/RecruitPage';
-import GalaryPage from './GalaryPage';
 import RecruitCreatePage from './recruit/recruitCreatePage/RecruitCreatePage';
 import SignInPage from './account/signIn/SignInPage';
 import SignUpPage from './account/signUp/SignUpPage';
@@ -34,7 +33,6 @@ import AccountSetting from './account/accountSetting/AccountSetting';
 export {
 	MainPage,
 	RecruitPage,
-	GalaryPage,
 	RecruitCreatePage,
 	SignInPage,
 	SignUpPage,
