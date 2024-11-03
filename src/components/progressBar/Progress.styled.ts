@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 interface Progression {
-	progression: number;
+	$progression: number;
 }
 
 const ProgressBackground = styled.section`
@@ -16,7 +16,7 @@ const ProgressBackground = styled.section`
 `;
 
 const Progress = styled.div<Progression>`
-	width: ${props => (props.progression ? props.progression.toString() + '%' : '0%')};
+	width: ${props => (props.$progression ? props.$progression.toString() + '%' : '0%')};
 	height: 100%;
 	background-color: #5877fc;
 	border-radius: 5rem;
