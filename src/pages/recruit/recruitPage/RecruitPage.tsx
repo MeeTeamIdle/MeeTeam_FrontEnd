@@ -280,7 +280,6 @@ const RecruitPage = () => {
 
 	useEffect(() => {
 		const queryParams = {
-			scope: searchParams.get('scope'),
 			category: searchParams.get('category'),
 			skill: searchParams.getAll('skill').map(Number),
 			role: searchParams.getAll('role').map(Number),
@@ -292,7 +291,6 @@ const RecruitPage = () => {
 		};
 
 		setFilterState({
-			scope: queryParams.scope ? Number(queryParams.scope) : null,
 			category: queryParams.category ? Number(queryParams.category) : null,
 			skill: queryParams.skill ? queryParams.skill : [],
 			role: queryParams.role ? queryParams.role : [],
