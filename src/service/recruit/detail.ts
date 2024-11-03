@@ -13,6 +13,7 @@ interface PostingData {
 	isLogin: boolean;
 }
 
+// !! 개선 필요
 export const getPostingData = async ({ pageNum, isLogin }: PostingData) => {
 	try {
 		if (isLogin) {
