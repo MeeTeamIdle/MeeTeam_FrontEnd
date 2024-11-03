@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -12,6 +12,7 @@ import {
 	SignInPage,
 } from './pages/index.ts';
 import './globalStyle.css';
+import { CircularProgress } from '@mui/material';
 
 const ApplierManagePage = React.lazy(
 	() => import('./pages/recruit/applierManagePage/ApplierManagePage')
@@ -176,6 +177,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<RouterProvider router={router} />
+		<Suspense fallback={<CircularProgress />}>
+			<RouterProvider router={router} />
+		</Suspense>
 	</React.StrictMode>
 );

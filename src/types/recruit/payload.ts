@@ -69,7 +69,6 @@ export interface InputCourse {
 }
 
 export interface RecruitFilter {
-	scope: number | null;
 	category: number | null;
 	field: number | null;
 	skill: number[];

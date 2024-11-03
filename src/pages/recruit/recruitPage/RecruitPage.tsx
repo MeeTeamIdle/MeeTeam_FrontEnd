@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
 	Dropdown,
-	RecruitCard,
 	Pagination,
 	NeedLogin,
 	ModalPortal,
@@ -14,6 +13,7 @@ import {
 	ClearConditions,
 	SearchBar,
 	FieldPopup,
+	RecruitCard,
 } from '../../../components';
 import S from './RecruitPage.styled';
 import { FilledBookmark } from '../../../assets';
@@ -27,14 +27,9 @@ import {
 	signupModalState,
 } from '../../../atom';
 import { useFixModalBackground, useFocusToTop, useLogin, useOutsideClick } from '../../../hooks';
-import {
-	useLoaderData,
-	useLocation,
-	useNavigate,
-	useRouteLoaderData,
-	useSearchParams,
-} from 'react-router-dom';
-import { ListResult } from '../../../types';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { getAuthPostList, getPostList } from '../../../service/recruit/board';
+import { useQuery } from '@tanstack/react-query';
 
 const RecruitPage = () => {
 	const navigate = useNavigate();
@@ -69,16 +64,16 @@ const RecruitPage = () => {
 	const [needLoginModal, setNeedLoginModal] = useRecoilState(needLoginModalState);
 	const [signupModalOpen, setSignupModalOpen] = useRecoilState(signupModalState);
 
-	// !! 임시 주석 처리
-	// const { data } = useQuery({
-	// 	queryKey: ['recruit_board', { filterState, page }],
-	// 	queryFn: () => getPostList({ filterState, page }),
-	// 	enabled: !!isLogin,
-	// });
-
-	const recruitData = useLoaderData() as ListResult;
-	const schoolData = useRouteLoaderData('school') as ListResult;
-	const data: ListResult = location.pathname === '/' ? recruitData : schoolData;
+	const { data: posts } = useQuery({
+		queryKey: [location.pathname],
+		queryFn: async () => {
+			if (location.pathname === '/') {
+				return await getPostList({ filterState, page });
+			} else if (location.pathname === '/school') {
+				return await getAuthPostList({ filterState, page });
+			}
+		},
+	});
 
 	const onClickDetailed = (event: React.MouseEvent) => {
 		event.stopPropagation();
@@ -103,7 +98,6 @@ const RecruitPage = () => {
 
 	const onClickClear = () => {
 		setFilterState({
-			scope: null,
 			category: null,
 			field: null,
 			skill: [],
@@ -118,7 +112,6 @@ const RecruitPage = () => {
 		setSearchParams(searchParams);
 		setIsOpenDetail({ skill: true, role: false, tag: false, message: '기술' });
 
-		searchParams.delete('scope');
 		searchParams.delete('category');
 		searchParams.delete('skill');
 		searchParams.delete('role');
@@ -271,7 +264,7 @@ const RecruitPage = () => {
 
 	useEffect(() => {
 		setPreviousLocationState(location.pathname + location.search);
-	}, [location]);
+	}, [location, setPreviousLocationState]);
 
 	useEffect(() => {
 		if (
@@ -286,32 +279,32 @@ const RecruitPage = () => {
 	}, [filterState.role, filterState.skill, filterState.tag]);
 
 	useEffect(() => {
-		const isScope = searchParams.get('scope');
-		const isCategory = searchParams.get('category');
-		const isSkill = searchParams.getAll('skill').map(Number);
-		const isRole = searchParams.getAll('role').map(Number);
-		const isTag = searchParams.getAll('tag').map(Number);
-		const isKeyword = searchParams.get('keyword');
-		const isField = searchParams.get('field');
-		const isCourse = searchParams.get('course');
-		const isProfessor = searchParams.get('professor');
+		const queryParams = {
+			scope: searchParams.get('scope'),
+			category: searchParams.get('category'),
+			skill: searchParams.getAll('skill').map(Number),
+			role: searchParams.getAll('role').map(Number),
+			tag: searchParams.getAll('tag').map(Number),
+			keyword: searchParams.get('keyword'),
+			field: searchParams.get('field'),
+			course: searchParams.get('course'),
+			professor: searchParams.get('professor'),
+		};
 
 		setFilterState({
-			scope: isScope ? Number(isScope) : null,
-			category: isCategory ? Number(isCategory) : null,
-			skill: isSkill ? isSkill : [],
-			role: isRole ? isRole : [],
-			tag: isTag ? isTag : [],
-			keyword: isKeyword ? isKeyword : '',
-			field: isField ? Number(isField) : null,
-			course: isCourse ? Number(isCourse) : null,
-			professor: isProfessor ? Number(isProfessor) : null,
+			scope: queryParams.scope ? Number(queryParams.scope) : null,
+			category: queryParams.category ? Number(queryParams.category) : null,
+			skill: queryParams.skill ? queryParams.skill : [],
+			role: queryParams.role ? queryParams.role : [],
+			tag: queryParams.tag ? queryParams.tag : [],
+			keyword: queryParams.keyword ? queryParams.keyword : '',
+			field: queryParams.field ? Number(queryParams.field) : null,
+			course: queryParams.course ? Number(queryParams.course) : null,
+			professor: queryParams.professor ? Number(queryParams.professor) : null,
 		});
-	}, []);
 
-	useEffect(() => {
-		setSearchKeyword(filterState.keyword as string);
-	}, [filterState.keyword]);
+		setSearchKeyword(queryParams.keyword || '');
+	}, [searchParams, setFilterState]);
 
 	return (
 		<>
@@ -330,9 +323,6 @@ const RecruitPage = () => {
 					/>
 					<section className='wrapper-filters'>
 						<section className='container-filters'>
-							{isLogin && (
-								<Dropdown data={['모든 범위', '교내', '교외']} initialData='범위' scope />
-							)}
 							<Dropdown
 								data={['모든 유형', '프로젝트', '스터디', '공모전']}
 								initialData='유형'
@@ -369,14 +359,14 @@ const RecruitPage = () => {
 								<img src={FilledBookmark} alt='bookmark-icon' />
 								<span className='body2'>북마크 모아보기 {'❯'}</span>
 							</article>
-							{data && (
+							{posts && (
 								<section className='container-contents__grid'>
-									{data.posts.map(post => (
+									{posts.posts.map(post => (
 										<RecruitCard {...post} key={post.id} />
 									))}
 								</section>
 							)}
-							{data && data.posts.length === 0 && (
+							{posts && posts.posts.length === 0 && (
 								<section className='no-results'>
 									<span>일치하는 결과가 없습니다.</span>
 								</section>
@@ -385,10 +375,10 @@ const RecruitPage = () => {
 					</article>
 				</section>
 				<article className='container-pagination'>
-					{data && (
+					{posts && (
 						<Pagination
-							postsNum={data.pageInfo.totalContents}
-							postsPerPage={data.pageInfo.size}
+							postsNum={posts.pageInfo.totalContents}
+							postsPerPage={posts.pageInfo.size}
 							currentPage={page}
 							setCurrentPage={setPage}
 						/>

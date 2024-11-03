@@ -209,7 +209,6 @@ export const previousLocationState = atom({
 export const recruitFilterState = atom<RecruitFilter>({
 	key: 'recruitFilter',
 	default: {
-		scope: null,
 		category: null,
 		field: null,
 		skill: [],
