@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { Suspense, useEffect, useMemo } from 'react';
 import S from './RecruitDetailPage.styled';
 import {
 	CommentInput,
@@ -11,9 +11,6 @@ import {
 	LinkToList,
 	WriterFooter,
 	ApplierFooter,
-	ApplyModal,
-	ConfirmModal,
-	FinalModal,
 	ClosedFooter,
 	ApplyCancel,
 	ApplyClose,
@@ -37,6 +34,17 @@ import {
 } from '../../../atom';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLogin } from '../../../hooks';
+import { CircularProgress } from '@mui/material';
+
+const ApplyModal = React.lazy(
+	() => import('../../../components/recruit/recruitDetail/modal/ApplyModal')
+);
+const ConfirmModal = React.lazy(
+	() => import('../../../components/recruit/recruitDetail/modal/ConfirmModal')
+);
+const FinalModal = React.lazy(
+	() => import('../../../components/recruit/recruitDetail/modal/FinalModal')
+);
 
 const stepLists: JsxElementComponentProps = {
 	0: <ApplyModal />,
@@ -73,7 +81,7 @@ const RecruitDetailPage = () => {
 				return total + 1 + (comment.replies ? comment.replies.length : 0);
 			}, 0);
 		}
-	}, [detailedData?.comments]);
+	}, [detailedData]);
 
 	const onClickEditPage = async () => {
 		navigate(`/recruitment/postings/edit/${pageNum}`);
@@ -135,7 +143,7 @@ const RecruitDetailPage = () => {
 						<section className='container-comments'>
 							<ul className='container-comments__lists'>
 								{isSuccess &&
-									detailedData.comments.map((comment, _) => {
+									detailedData.comments.map(comment => {
 										return <Comment key={comment.id} {...comment} />;
 									})}
 							</ul>
@@ -154,9 +162,11 @@ const RecruitDetailPage = () => {
 						</section>
 					</article>
 					{isModal && (
-						<form onSubmit={submitHandler}>
-							<section className='modal-background'>{stepLists[step]}</section>
-						</form>
+						<Suspense fallback={<CircularProgress />}>
+							<form onSubmit={submitHandler}>
+								<section className='modal-background'>{stepLists[step]}</section>
+							</form>
+						</Suspense>
 					)}
 					{isCancel && (
 						<section className='modal-background'>
