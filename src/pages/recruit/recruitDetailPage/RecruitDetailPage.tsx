@@ -8,6 +8,7 @@ import {
 	WriterFooter,
 	ApplierFooter,
 	ClosedFooter,
+	LoadingBackground,
 } from '../../../components';
 import { calculateDate, fixModalBackground } from '../../../utils';
 import { JsxElementComponentProps } from '../../../types';
@@ -27,7 +28,6 @@ import {
 } from '../../../atom';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLogin } from '../../../hooks';
-import { CircularProgress } from '@mui/material';
 
 const ApplyModal = React.lazy(
 	() => import('../../../components/recruit/recruitDetail/modal/ApplyModal')
@@ -146,10 +146,10 @@ const RecruitDetailPage = () => {
 						isClosed={detailedData.isClosed}
 					/>
 					<RecruitDescription content={detailedData.content} />
-					<Suspense fallback={<CircularProgress />}>
+					<Suspense fallback={<LoadingBackground />}>
 						<RecruitRoles roles={detailedData.recruitmentRoles} />
 					</Suspense>
-					<Suspense fallback={<CircularProgress />}>
+					<Suspense fallback={<LoadingBackground />}>
 						<RecruitTag tags={detailedData.tags} />
 					</Suspense>
 					<LinkToList />
@@ -159,7 +159,7 @@ const RecruitDetailPage = () => {
 							<span>{totalCommentsCount}</span>
 						</section>
 						<hr />
-						<Suspense fallback={<CircularProgress />}>
+						<Suspense fallback={<LoadingBackground />}>
 							<section className='container-comments'>
 								<ul className='container-comments__lists'>
 									{isSuccess &&
@@ -183,28 +183,28 @@ const RecruitDetailPage = () => {
 						</Suspense>
 					</article>
 					{isModal && (
-						<Suspense fallback={<CircularProgress />}>
+						<Suspense fallback={<LoadingBackground />}>
 							<form onSubmit={submitHandler}>
 								<section className='modal-background'>{stepLists[step]}</section>
 							</form>
 						</Suspense>
 					)}
 					{isCancel && (
-						<Suspense fallback={<CircularProgress />}>
+						<Suspense fallback={<LoadingBackground />}>
 							<section className='modal-background'>
 								<ApplyCancel pageNum={pageNum} />
 							</section>
 						</Suspense>
 					)}
 					{isClose && (
-						<Suspense fallback={<CircularProgress />}>
+						<Suspense fallback={<LoadingBackground />}>
 							<section className='modal-background'>
 								<ApplyClose />
 							</section>
 						</Suspense>
 					)}
 					{isPostingDelete && (
-						<Suspense fallback={<CircularProgress />}>
+						<Suspense fallback={<LoadingBackground />}>
 							<section className='modal-background'>
 								<PostingDelete />
 							</section>

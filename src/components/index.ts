@@ -92,6 +92,7 @@ import DropdownDetail from './dropdown/dropdownDetail/DropdownDetail';
 import ClearConditions from './recruit/recruitBoard/clear/ClearConditions';
 import SearchBar from './recruit/recruitBoard/searchBar/SearchBar';
 import FieldPopup from './recruit/recruitBoard/fieldPopup/FieldPopup';
+import LoadingBackground from './loading/LoadingBackground';
 
 export {
 	Header,
@@ -188,4 +189,5 @@ export {
 	ClearConditions,
 	SearchBar,
 	FieldPopup,
+	LoadingBackground,
 };

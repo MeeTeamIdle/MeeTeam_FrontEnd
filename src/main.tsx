@@ -5,7 +5,8 @@ import App from './App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { RecruitPage, SignInPage } from './pages/index.ts';
 import './globalStyle.css';
-import { CircularProgress } from '@mui/material';
+
+import { LoadingBackground } from './components/index.ts';
 
 const RecruitCreatePage = React.lazy(
 	() => import('./pages/recruit/recruitCreatePage/RecruitCreatePage')
@@ -180,7 +181,7 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<Suspense fallback={<CircularProgress />}>
+		<Suspense fallback={<LoadingBackground />}>
 			<RouterProvider router={router} />
 		</Suspense>
 	</React.StrictMode>
