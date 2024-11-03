@@ -1,25 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import S from './AccountSetting.styled';
 import { RiArrowRightSLine } from 'react-icons/ri';
-import { Email } from '../../../assets';
 import { useRecoilState } from 'recoil';
 import { warningModalWithdrawState } from '../../../atom';
 import { AccountDelete } from '../../../components';
 import { fixModalBackground } from '../../../utils';
 
 const AccountSetting = () => {
-	const [dropdown, setDropdown] = useState({
-		account: false,
-		withdraw: false,
-	});
 	const [isWithdraw, setIsWithdraw] = useRecoilState(warningModalWithdrawState);
 
 	const withdrawHandler = (event: React.MouseEvent<HTMLDivElement>) => {
 		event.stopPropagation();
-		setDropdown(prev => ({
-			...prev,
-			withdraw: !prev.withdraw,
-		}));
 	};
 
 	const withdrawModalHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -78,7 +69,12 @@ const AccountSetting = () => {
 					</section>
 				</article>
 			</section>
-			<section className='wrapper-personal'>
+			<section
+				className='wrapper-personal'
+				onClick={() =>
+					window.open('https://www.notion.so/10e6ef13aebb42e5b87d4bd873eef04f?pvs=4', '_blank')
+				}
+			>
 				<span>개인정보 처리방침</span>
 				<span className='icon'>
 					<RiArrowRightSLine />

@@ -62,7 +62,6 @@ const AccountSettingStyled = styled.section`
 		border-radius: 0.75rem;
 		border: 0.75px solid #d3d3d3;
 		background: #fff;
-		cursor: pointer;
 	}
 
 	.container-account {
