@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { Suspense } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -54,11 +54,7 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: '',
-				element: (
-					<Suspense fallback={<div>Loading...</div>}>
-						<RecruitPage />
-					</Suspense>
-				),
+				element: <RecruitPage />,
 			},
 			{
 				path: 'school',
@@ -66,11 +62,7 @@ const router = createBrowserRouter([
 				children: [
 					{
 						path: '',
-						element: (
-							<Suspense fallback={<div>Loading...</div>}>
-								<RecruitPage />
-							</Suspense>
-						),
+						element: <RecruitPage />,
 					},
 				],
 			},
