@@ -83,9 +83,8 @@ const RecruitDetailPage = () => {
 	const [isGoProfile, setGoProfile] = useRecoilState(goProfileState);
 
 	const { data: detailedData, isSuccess } = useQuery({
-		queryKey: ['detailedPage', { pageNum }],
+		queryKey: ['detailedPage', { pageNum, isLogin }],
 		queryFn: () => getPostingData({ pageNum, isLogin }),
-		enabled: isLogin,
 	});
 
 	const period = detailedData?.proceedingStart + ' ~ ' + detailedData?.proceedingEnd;
