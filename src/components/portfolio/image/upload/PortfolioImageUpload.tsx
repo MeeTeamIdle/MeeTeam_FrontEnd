@@ -128,6 +128,7 @@ const PortfolioImageUpload = ({
 							shouldDirty: true,
 							shouldTouch: true,
 						});
+					event.target.value = ''; // 같은 이름 파일 있을 때만 input value 초기화
 				};
 				continue;
 			}
