@@ -27,6 +27,7 @@ export const useReadPortfolio = (portfolioId: string) => {
 	return useQuery({
 		queryKey: portfolioKeys.readPortfolio(portfolioId),
 		queryFn: () => readPortfolio(portfolioId),
+		enabled: !!portfolioId,
 	});
 };
 
