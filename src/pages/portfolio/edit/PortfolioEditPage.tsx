@@ -65,7 +65,7 @@ const PortfolioEditPage = () => {
 
 	const { data: portfolio, isSuccess: isSuccessReadPortfolio } = useReadPortfolio(portfolioId);
 
-	const { register, formState, handleSubmit, control, watch, getValues, setValue } =
+	const { register, formState, handleSubmit, control, watch, getValues, setValue, clearErrors } =
 		useForm<FormValues>({
 			mode: 'onChange',
 			values: {
@@ -182,6 +182,22 @@ const PortfolioEditPage = () => {
 	// 역할
 	const role = useDebounce(watch('role')) as string;
 	const { data: roles } = useReadRoleList(role);
+
+	// 진행 기간
+	useEffect(() => {
+		const subscription = watch(value => {
+			if (
+				differenceInDays(
+					new Date(value['endDate'] as string),
+					new Date(value['startDate'] as string)
+				) >= 0
+			) {
+				clearErrors(['startDate', 'endDate']);
+			}
+		});
+
+		return () => subscription.unsubscribe();
+	}, [watch]);
 
 	// 진행 방식
 	const [proceedType, setProceedType] = useState(portfolio?.proceedType);
@@ -400,12 +416,14 @@ const PortfolioEditPage = () => {
 											rules={{
 												required: '시작일을 설정해주세요',
 												validate: (startDate: string) => {
-													return (
-														differenceInDays(
-															new Date(watch('endDate') as string),
-															new Date(startDate)
-														) >= 0 || '시작일을 종료일보다 빠르게 설정해주세요'
-													);
+													if (watch('endDate')) {
+														return (
+															differenceInDays(
+																new Date(watch('endDate') as string),
+																new Date(startDate)
+															) >= 0 || '시작일을 종료일 이전으로 설정해주세요'
+														);
+													}
 												},
 											}}
 										/>
@@ -413,7 +431,19 @@ const PortfolioEditPage = () => {
 											name={`endDate`}
 											control={control}
 											formState={formState}
-											{...PORTFOLIO_EDIT_DATA.endDate}
+											rules={{
+												required: '종료일을 설정해주세요',
+												validate: (endDate: string) => {
+													if (watch('startDate')) {
+														return (
+															differenceInDays(
+																new Date(endDate),
+																new Date(watch('startDate') as string)
+															) >= 0 || '종료일을 시작일 이후로 설정해주세요'
+														);
+													}
+												},
+											}}
 										/>
 									</S.PortfolioEditRow>
 								</S.PortfolioEditColumn>
