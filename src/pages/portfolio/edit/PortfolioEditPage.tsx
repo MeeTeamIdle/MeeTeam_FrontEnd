@@ -116,6 +116,8 @@ const PortfolioEditPage = () => {
 
 			// 폼 제출
 			const formData = getValues();
+			delete formData.mainImage;
+
 			const portfolioData = {
 				...formData,
 				mainImageFileName: imageResponse?.[1].fileName,
