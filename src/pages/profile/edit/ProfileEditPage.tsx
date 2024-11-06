@@ -36,7 +36,7 @@ import {
 } from '../../../hooks';
 import { useNavigate } from 'react-router-dom';
 import { useReadInfinitePortfolioList } from '../../../hooks/usePortfolio';
-import { fixModalBackground } from '../../../utils';
+import { fixModalBackground, checkEnterKeyDown } from '../../../utils';
 
 interface FormValues {
 	nickname?: string;
@@ -389,7 +389,7 @@ const ProfileEditPage = () => {
 
 	return (
 		<>
-			<S.ProfileLayout onSubmit={handleSubmit(submitHandler)}>
+			<S.ProfileLayout onSubmit={handleSubmit(submitHandler)} onKeyDown={e => checkEnterKeyDown(e)}>
 				<S.ProfileHeader>
 					<ProfileImage
 						isEditable={true}

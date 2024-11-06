@@ -13,6 +13,7 @@ import isNotNumber from './isNotNumber';
 import calculateDate from './calculateDate';
 import throttle from './throttle';
 import addClassToEmptyPTags from './addClassToEmptyPTags';
+import checkEnterKeyDown from './checkEnterKeyDown';
 
 export {
 	modules,
@@ -31,4 +32,5 @@ export {
 	calculateDate,
 	throttle,
 	addClassToEmptyPTags,
+	checkEnterKeyDown,
 };

@@ -30,7 +30,7 @@ import {
 	useUploadImageFile,
 } from '../../../hooks';
 import PORTFOLIO_EDIT_DATA from './portfolioEditData';
-import { modules, formats, fixModalBackground, zipFile } from '../../../utils';
+import { modules, formats, fixModalBackground, zipFile, checkEnterKeyDown } from '../../../utils';
 import { Refresh } from '../../../assets';
 import type ReactQuill from 'react-quill';
 import { useRecoilValue } from 'recoil';
@@ -284,10 +284,6 @@ const PortfolioEditPage = () => {
 			setValue('content', portfolio?.content ?? PORTFOLIO_EDITOR_TEMPLATE);
 		}
 	}, [isSuccessReadPortfolio]);
-
-	const checkEnterKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === 'Enter') e.preventDefault();
-	};
 
 	const checkTabKeyDown = (event: React.KeyboardEvent<ReactQuill>) => {
 		if (event.key === 'Tab') event.preventDefault();
