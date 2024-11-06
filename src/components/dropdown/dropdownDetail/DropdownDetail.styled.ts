@@ -13,7 +13,6 @@ const DropdownDetail = styled.section<{ $isDetailSelected: boolean }>`
 	color: #373f41;
 	font-weight: 400;
 	height: 4.8rem;
-	cursor: pointer;
 
 	.selected {
 		color: ${props => (props.$isDetailSelected ? '#5877FC' : '#373f41')};
