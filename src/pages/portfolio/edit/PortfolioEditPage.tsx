@@ -30,7 +30,7 @@ import {
 	useUploadImageFile,
 } from '../../../hooks';
 import PORTFOLIO_EDIT_DATA from './portfolioEditData';
-import { modules, formats, fixModalBackground, zipFile } from '../../../utils';
+import { modules, formats, fixModalBackground, zipFile, checkEnterKeyDown } from '../../../utils';
 import { Refresh } from '../../../assets';
 import type ReactQuill from 'react-quill';
 import { useRecoilValue } from 'recoil';
@@ -65,7 +65,7 @@ const PortfolioEditPage = () => {
 
 	const { data: portfolio, isSuccess: isSuccessReadPortfolio } = useReadPortfolio(portfolioId);
 
-	const { register, formState, handleSubmit, control, watch, getValues, setValue } =
+	const { register, formState, handleSubmit, control, watch, getValues, setValue, clearErrors } =
 		useForm<FormValues>({
 			mode: 'onChange',
 			values: {
@@ -116,6 +116,8 @@ const PortfolioEditPage = () => {
 
 			// 폼 제출
 			const formData = getValues();
+			delete formData.mainImage;
+
 			const portfolioData = {
 				...formData,
 				mainImageFileName: imageResponse?.[1].fileName,
@@ -180,6 +182,22 @@ const PortfolioEditPage = () => {
 	// 역할
 	const role = useDebounce(watch('role')) as string;
 	const { data: roles } = useReadRoleList(role);
+
+	// 진행 기간
+	useEffect(() => {
+		const subscription = watch(value => {
+			if (
+				differenceInDays(
+					new Date(value['endDate'] as string),
+					new Date(value['startDate'] as string)
+				) >= 0
+			) {
+				clearErrors(['startDate', 'endDate']);
+			}
+		});
+
+		return () => subscription.unsubscribe();
+	}, [watch]);
 
 	// 진행 방식
 	const [proceedType, setProceedType] = useState(portfolio?.proceedType);
@@ -259,16 +277,13 @@ const PortfolioEditPage = () => {
 	};
 
 	useEffect(() => {
+		setValue('content', PORTFOLIO_EDITOR_TEMPLATE);
 		if (isSuccessReadPortfolio) {
 			setProceedType(portfolio?.proceedType);
 			setSkillList(portfolio?.skills ? portfolio?.skills : []);
 			setValue('content', portfolio?.content ?? PORTFOLIO_EDITOR_TEMPLATE);
 		}
 	}, [isSuccessReadPortfolio]);
-
-	const checkEnterKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === 'Enter') e.preventDefault();
-	};
 
 	const checkTabKeyDown = (event: React.KeyboardEvent<ReactQuill>) => {
 		if (event.key === 'Tab') event.preventDefault();
@@ -304,227 +319,236 @@ const PortfolioEditPage = () => {
 
 	return (
 		<>
-			{isSuccessReadPortfolio && (
-				<S.PortfolioEditLayout
-					onSubmit={handleSubmit(submitHandler, submitErrorHandler)}
-					onKeyDown={e => checkEnterKeyDown(e)}
-				>
-					<S.PortfolioEditColumn $gap='4rem'>
-						<S.PortfolioEditHeader>
-							<h2>포트폴리오 작성</h2>
-							<h4>
-								작성하신 포트폴리오는 프로필을 통해 보여집니다. 진행했던 내용을 자유롭게
-								작성해보세요!
-							</h4>
-							<hr />
-						</S.PortfolioEditHeader>
+			(
+			<S.PortfolioEditLayout
+				onSubmit={handleSubmit(submitHandler, submitErrorHandler)}
+				onKeyDown={e => checkEnterKeyDown(e)}
+			>
+				<S.PortfolioEditColumn $gap='4rem'>
+					<S.PortfolioEditHeader>
+						<h2>포트폴리오 작성</h2>
+						<h4>
+							작성하신 포트폴리오는 프로필을 통해 보여집니다. 진행했던 내용을 자유롭게 작성해보세요!
+						</h4>
+						<hr />
+					</S.PortfolioEditHeader>
 
-						<S.PortfolioEditColumn>
-							<S.PortfolioEditArticle>
-								<S.PortfolioEditTitle>슬라이드 이미지</S.PortfolioEditTitle>
-								<S.PortfolioEditColumn $width='clamp(50%, 76.4rem, 100%)' $gap='3.6rem'>
-									<S.PortfolioEditRow>
-										<S.PortfolioEditLabel $required={true}>{LABEL.image}</S.PortfolioEditLabel>
-										<PrimaryBtn
-											type='button'
-											title='슬라이드 순서 변경'
-											icon={Refresh}
-											handleClick={() => setModalOpen(true)}
-										/>
-										{modalOpen && (
-											<ModalPortal>
-												<PortfolioImageModal onClose={() => setModalOpen(false)} />
-											</ModalPortal>
-										)}
-									</S.PortfolioEditRow>
-									<PortfolioImageUpload
+					<S.PortfolioEditColumn>
+						<S.PortfolioEditArticle>
+							<S.PortfolioEditTitle>슬라이드 이미지</S.PortfolioEditTitle>
+							<S.PortfolioEditColumn $width='clamp(50%, 76.4rem, 100%)' $gap='3.6rem'>
+								<S.PortfolioEditRow>
+									<S.PortfolioEditLabel $required={true}>{LABEL.image}</S.PortfolioEditLabel>
+									<PrimaryBtn
+										type='button'
+										title='슬라이드 순서 변경'
+										icon={Refresh}
+										handleClick={() => setModalOpen(true)}
+									/>
+									{modalOpen && (
+										<ModalPortal>
+											<PortfolioImageModal onClose={() => setModalOpen(false)} />
+										</ModalPortal>
+									)}
+								</S.PortfolioEditRow>
+								<PortfolioImageUpload
+									register={register}
+									formState={formState}
+									setValue={setValue}
+									zipFileUrl={portfolio?.zipFileUrl}
+									fileOrder={portfolio?.fileOrder}
+								/>
+							</S.PortfolioEditColumn>
+						</S.PortfolioEditArticle>
+						<hr />
+					</S.PortfolioEditColumn>
+
+					<S.PortfolioEditColumn>
+						<S.PortfolioEditArticle>
+							<S.PortfolioEditTitle>기본 정보</S.PortfolioEditTitle>
+							<S.PortfolioEditColumn $width='clamp(50%, 76.4rem, 100%)' $gap='3.6rem'>
+								{/* 포트폴리오 제목 */}
+								<Input
+									register={register}
+									watch={watch}
+									formState={formState}
+									{...PORTFOLIO_EDIT_DATA.title}
+								/>
+								{/* 포트폴리오 한줄 소개 */}
+								<Input
+									register={register}
+									watch={watch}
+									formState={formState}
+									{...PORTFOLIO_EDIT_DATA.description}
+								/>
+								<S.PortfolioEditRow $gap='2rem'>
+									{/* 분야 */}
+									<ComboBox
 										register={register}
-										formState={formState}
 										setValue={setValue}
-										zipFileUrl={portfolio?.zipFileUrl}
-										fileOrder={portfolio?.fileOrder}
-									/>
-								</S.PortfolioEditColumn>
-							</S.PortfolioEditArticle>
-							<hr />
-						</S.PortfolioEditColumn>
-
-						<S.PortfolioEditColumn>
-							<S.PortfolioEditArticle>
-								<S.PortfolioEditTitle>기본 정보</S.PortfolioEditTitle>
-								<S.PortfolioEditColumn $width='clamp(50%, 76.4rem, 100%)' $gap='3.6rem'>
-									{/* 포트폴리오 제목 */}
-									<Input
-										register={register}
-										watch={watch}
 										formState={formState}
-										{...PORTFOLIO_EDIT_DATA.title}
+										getValues={getValues}
+										optionList={fields}
+										{...PORTFOLIO_EDIT_DATA.field}
 									/>
-									{/* 포트폴리오 한줄 소개 */}
-									<Input
+									{/* 역할 */}
+									<ComboBox
 										register={register}
-										watch={watch}
+										setValue={setValue}
 										formState={formState}
-										{...PORTFOLIO_EDIT_DATA.description}
+										getValues={getValues}
+										optionList={roles}
+										{...PORTFOLIO_EDIT_DATA.role}
 									/>
+								</S.PortfolioEditRow>
+								{/* 진행기간 */}
+								<S.PortfolioEditColumn>
+									<S.PortfolioEditLabel $required={true}>진행기간</S.PortfolioEditLabel>
 									<S.PortfolioEditRow $gap='2rem'>
-										{/* 분야 */}
-										<ComboBox
-											register={register}
-											setValue={setValue}
+										<MuiDatepickerController
+											name={`startDate`}
+											control={control}
 											formState={formState}
-											getValues={getValues}
-											optionList={fields}
-											{...PORTFOLIO_EDIT_DATA.field}
-										/>
-										{/* 역할 */}
-										<ComboBox
-											register={register}
-											setValue={setValue}
-											formState={formState}
-											getValues={getValues}
-											optionList={roles}
-											{...PORTFOLIO_EDIT_DATA.role}
-										/>
-									</S.PortfolioEditRow>
-									{/* 진행기간 */}
-									<S.PortfolioEditColumn>
-										<S.PortfolioEditLabel $required={true}>진행기간</S.PortfolioEditLabel>
-										<S.PortfolioEditRow $gap='2rem'>
-											<MuiDatepickerController
-												name={`startDate`}
-												control={control}
-												formState={formState}
-												rules={{
-													required: '시작일을 설정해주세요',
-													validate: (startDate: string) => {
+											rules={{
+												required: '시작일을 설정해주세요',
+												validate: (startDate: string) => {
+													if (watch('endDate')) {
 														return (
 															differenceInDays(
 																new Date(watch('endDate') as string),
 																new Date(startDate)
-															) >= 0 || '시작일을 종료일보다 빠르게 설정해주세요'
+															) >= 0 || '시작일을 종료일 이전으로 설정해주세요'
 														);
-													},
-												}}
-											/>
-											<MuiDatepickerController
-												name={`endDate`}
-												control={control}
-												formState={formState}
-												{...PORTFOLIO_EDIT_DATA.endDate}
-											/>
-										</S.PortfolioEditRow>
-									</S.PortfolioEditColumn>
-									{/* 진행방식 */}
-									<S.PortfolioEditColumn>
-										<S.PortfolioEditLabel $required={true}>진행방식</S.PortfolioEditLabel>
-										<S.PortfolioEditRelativeBox>
-											<S.PortfolioEditRow $width='clamp(45%, 34rem, 100%)' $gap='2rem'>
-												{PROCEED_TYPE.map(type => (
-													<Radio
-														register={register}
-														key={type}
-														id={type}
-														state={type === proceedType}
-														handleClick={handleRadioClick}
-														{...PORTFOLIO_EDIT_DATA.proceedType}
-													>
-														<div style={{ color: type === proceedType ? '#373F41' : '#8E8E8E' }}>
-															{type}
-														</div>
-													</Radio>
-												))}
-											</S.PortfolioEditRow>
-											<S.PortfolioEditErrorMessage>
-												{formState?.errors['proceedType']?.message}
-											</S.PortfolioEditErrorMessage>
-										</S.PortfolioEditRelativeBox>
-									</S.PortfolioEditColumn>
-									{/* 스킬 */}
-									<S.PortfolioEditColumn $gap='2rem'>
-										<ComboBox
-											register={register}
-											setValue={setValue}
-											formState={formState}
-											getValues={getValues}
-											optionList={skills}
-											clickOption={addSkill}
-											{...PORTFOLIO_EDIT_DATA.skills}
+													}
+												},
+											}}
 										/>
-										<S.PortfolioEditRow $gap='1.05rem'>
-											{skillList?.map(({ ...props }, index) => (
-												<SkillTag
-													isEditable={true}
-													handleClick={deleteSkill}
-													key={index}
-													{...props}
-												/>
+										<MuiDatepickerController
+											name={`endDate`}
+											control={control}
+											formState={formState}
+											rules={{
+												required: '종료일을 설정해주세요',
+												validate: (endDate: string) => {
+													if (watch('startDate')) {
+														return (
+															differenceInDays(
+																new Date(endDate),
+																new Date(watch('startDate') as string)
+															) >= 0 || '종료일을 시작일 이후로 설정해주세요'
+														);
+													}
+												},
+											}}
+										/>
+									</S.PortfolioEditRow>
+								</S.PortfolioEditColumn>
+								{/* 진행방식 */}
+								<S.PortfolioEditColumn>
+									<S.PortfolioEditLabel $required={true}>진행방식</S.PortfolioEditLabel>
+									<S.PortfolioEditRelativeBox>
+										<S.PortfolioEditRow $width='clamp(45%, 34rem, 100%)' $gap='2rem'>
+											{PROCEED_TYPE.map(type => (
+												<Radio
+													register={register}
+													key={type}
+													id={type}
+													state={type === proceedType}
+													handleClick={handleRadioClick}
+													{...PORTFOLIO_EDIT_DATA.proceedType}
+												>
+													<div style={{ color: type === proceedType ? '#373F41' : '#8E8E8E' }}>
+														{type}
+													</div>
+												</Radio>
 											))}
 										</S.PortfolioEditRow>
-									</S.PortfolioEditColumn>
+										<S.PortfolioEditErrorMessage>
+											{formState?.errors['proceedType']?.message}
+										</S.PortfolioEditErrorMessage>
+									</S.PortfolioEditRelativeBox>
 								</S.PortfolioEditColumn>
-							</S.PortfolioEditArticle>
-							<hr />
-						</S.PortfolioEditColumn>
-
-						<S.PortfolioEditColumn>
-							<S.PortfolioEditArticle>
-								<S.PortfolioEditTitle>상세 내용</S.PortfolioEditTitle>
-								<S.PortfolioEditColumn $width='clamp(50%, 76.4rem, 100%)'>
-									<S.PortfolioEditLabel $required={true}>{LABEL.content}</S.PortfolioEditLabel>
-									<S.PortfolioEditor
-										ref={e => {
-											ref(e);
-											if (quillRef) quillRef.current = e;
-										}}
-										value={watch('content')}
-										defaultValue={portfolio?.content ?? PORTFOLIO_EDITOR_TEMPLATE}
-										onChange={handleChangeEditor}
-										modules={modules}
-										formats={formats}
-										onKeyDown={checkTabKeyDown}
-										{...PORTFOLIO_EDIT_DATA.content}
+								{/* 스킬 */}
+								<S.PortfolioEditColumn $gap='2rem'>
+									<ComboBox
+										register={register}
+										setValue={setValue}
+										formState={formState}
+										getValues={getValues}
+										optionList={skills}
+										clickOption={addSkill}
+										{...PORTFOLIO_EDIT_DATA.skills}
 									/>
-								</S.PortfolioEditColumn>
-							</S.PortfolioEditArticle>
-							<hr />
-						</S.PortfolioEditColumn>
-
-						<S.PortfolioEditColumn>
-							<S.PortfolioEditArticle>
-								<S.PortfolioEditTitle>링크</S.PortfolioEditTitle>
-								<S.PortfolioEditColumn $width='clamp(50%, 76.4rem, 100%)'>
-									<AddFormBtn title='링크 추가' handleClick={() => addLink()} />
-									<S.PortfolioEditColumn $gap='3.6rem'>
-										{links?.map((link, index) => (
-											<LinkForm
-												key={link.id}
-												index={index}
-												width='clamp(10%, 11.8rem, 100%)'
-												register={register}
-												formState={formState}
-												getValues={getValues}
-												setValue={setValue}
-												remove={removeLink}
+									<S.PortfolioEditRow $gap='1.05rem'>
+										{skillList?.map(({ ...props }, index) => (
+											<SkillTag
+												isEditable={true}
+												handleClick={deleteSkill}
+												key={index}
+												{...props}
 											/>
 										))}
-									</S.PortfolioEditColumn>
+									</S.PortfolioEditRow>
 								</S.PortfolioEditColumn>
-							</S.PortfolioEditArticle>
-							<hr />
-						</S.PortfolioEditColumn>
-
-						<S.PortfolioEditButtonBox>
-							<DefaultBtn type='button' title='취소' handleClick={() => navigate(-1)} />
-							<PrimaryBtn
-								type='submit'
-								title='등록'
-								disabled={isSubmitting || isSubmitSuccessful}
-							/>
-						</S.PortfolioEditButtonBox>
+							</S.PortfolioEditColumn>
+						</S.PortfolioEditArticle>
+						<hr />
 					</S.PortfolioEditColumn>
-				</S.PortfolioEditLayout>
-			)}
+
+					<S.PortfolioEditColumn>
+						<S.PortfolioEditArticle>
+							<S.PortfolioEditTitle>상세 내용</S.PortfolioEditTitle>
+							<S.PortfolioEditColumn $width='clamp(50%, 76.4rem, 100%)'>
+								<S.PortfolioEditLabel $required={true}>{LABEL.content}</S.PortfolioEditLabel>
+								<S.PortfolioEditor
+									ref={e => {
+										ref(e);
+										if (quillRef) quillRef.current = e;
+									}}
+									value={watch('content')}
+									defaultValue={portfolio?.content ?? PORTFOLIO_EDITOR_TEMPLATE}
+									onChange={handleChangeEditor}
+									modules={modules}
+									formats={formats}
+									onKeyDown={checkTabKeyDown}
+									{...PORTFOLIO_EDIT_DATA.content}
+								/>
+							</S.PortfolioEditColumn>
+						</S.PortfolioEditArticle>
+						<hr />
+					</S.PortfolioEditColumn>
+
+					<S.PortfolioEditColumn>
+						<S.PortfolioEditArticle>
+							<S.PortfolioEditTitle>링크</S.PortfolioEditTitle>
+							<S.PortfolioEditColumn $width='clamp(50%, 76.4rem, 100%)'>
+								<AddFormBtn title='링크 추가' handleClick={() => addLink()} />
+								<S.PortfolioEditColumn $gap='3.6rem'>
+									{links?.map((link, index) => (
+										<LinkForm
+											key={link.id}
+											index={index}
+											width='clamp(10%, 11.8rem, 100%)'
+											register={register}
+											formState={formState}
+											getValues={getValues}
+											setValue={setValue}
+											remove={removeLink}
+										/>
+									))}
+								</S.PortfolioEditColumn>
+							</S.PortfolioEditColumn>
+						</S.PortfolioEditArticle>
+						<hr />
+					</S.PortfolioEditColumn>
+
+					<S.PortfolioEditButtonBox>
+						<DefaultBtn type='button' title='취소' handleClick={() => navigate(-1)} />
+						<PrimaryBtn type='submit' title='등록' disabled={isSubmitting || isSubmitSuccessful} />
+					</S.PortfolioEditButtonBox>
+				</S.PortfolioEditColumn>
+			</S.PortfolioEditLayout>
+			)
 			{alertOpen && (
 				<ModalPortal>
 					<Modal {...modalProps} />

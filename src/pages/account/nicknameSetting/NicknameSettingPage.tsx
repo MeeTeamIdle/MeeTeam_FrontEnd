@@ -46,7 +46,7 @@ const NicknameSettingPage = () => {
 
 	const nickname = useDebounce(watch('nickname'));
 	const authKeys = ['checkDuplicateNickname', nickname];
-	const { data } = useCheckDuplicateNickname(authKeys, isDirty && isValid);
+	const { data } = useCheckDuplicateNickname(authKeys, isDirty && isValid && !!nickname);
 
 	const [duplicateNicknameValidation, setDuplicateNicknameValidation] = useState('');
 	const [duplicated, setDuplicated] = useState(false);

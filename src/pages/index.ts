@@ -27,7 +27,7 @@ import RecruitPostingApply from './recruit/recruitManagePage/RecruitPostingApply
 import RecruitMyPostings from './recruit/recruitManagePage/RecruitMyPostings';
 import CompleteSignUpPage from './account/complete/CompleteSignUpPage';
 import PrivateRouter from './routes/PrivateRouter';
-import PortfolioManagementPage from './portfolio/management/PortfolioManagmentPage';
+import PortfolioManagementPage from './portfolio/management/PortfolioManagementPage';
 import NotFound from './notFound/NotFound';
 import AccountSetting from './account/accountSetting/AccountSetting';
 
