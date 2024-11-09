@@ -46,11 +46,20 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 		const keyword = event.target.value;
 		setName(prev => ({ ...prev, course: keyword }));
 		setDropdown({ course: keyword.length > 0, professor: false });
+
+		if (keyword.length === 0) {
+			setDropdown({ course: false, professor: false });
+		}
 	}, []);
 
 	const onChangeProfessor = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-		setName(prev => ({ ...prev, professor: event.target.value }));
+		const keyword = event.target.value;
+		setName(prev => ({ ...prev, professor: keyword }));
 		setDropdown({ course: false, professor: true });
+
+		if (keyword.length === 0) {
+			setDropdown({ course: false, professor: false });
+		}
 	}, []);
 
 	const onClickCheckbox = () => {
@@ -129,7 +138,19 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 									</span>
 								))
 							) : (
-								<TextBox message='검색 결과가 없습니다.' />
+								<section className='no-result'>
+									<TextBox message='검색 결과가 없습니다.' />
+									<span className='body1-medium'>해당 수업을 새로 추가할까요?</span>
+									<section className='container-btn'>
+										<span
+											className='btn-create txt2'
+											onClick={() => setDropdown({ course: false, professor: false })}
+										>
+											추가하기
+										</span>
+										<span className='body1-medium'>{keywordProfessor}</span>
+									</section>
+								</section>
 							)}
 						</section>
 					)}
@@ -155,7 +176,19 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 									</span>
 								))
 							) : (
-								<TextBox message='검색 결과가 없습니다.' />
+								<section className='no-result'>
+									<TextBox message='검색 결과가 없습니다.' />
+									<span className='body1-medium'>해당 교수님을 새로 추가할까요?</span>
+									<section className='container-btn'>
+										<span
+											className='btn-create txt2'
+											onClick={() => setDropdown({ course: false, professor: false })}
+										>
+											추가하기
+										</span>
+										<span className='body1-medium'>{keywordProfessor}</span>
+									</section>
+								</section>
 							)}
 						</section>
 					)}
