@@ -1,9 +1,15 @@
 import React from 'react';
 
-const TextBox = ({ message }: { message: string }) => {
+interface TextBox {
+	message: string;
+	children?: React.ReactNode;
+}
+
+const TextBox = ({ message, children }: TextBox) => {
 	return (
 		<article>
 			<span>{message}</span>
+			{children}
 		</article>
 	);
 };

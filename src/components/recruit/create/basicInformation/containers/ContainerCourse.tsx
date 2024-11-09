@@ -6,6 +6,7 @@ import { getCourseKeyword, getProfessorKeyword } from '../../../../../service';
 import { useRecoilState } from 'recoil';
 import { recruitInputState } from '../../../../../atom';
 import { Keyword } from '../../../../../types';
+import { TextBox } from '../../../../index';
 
 interface ContainerCourseProps {
 	course?: string | null;
@@ -26,14 +27,14 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 	});
 	const keywordCourse = useDebounce(name.course, 500);
 	const keywordProfessor = useDebounce(name.professor, 500);
-	const { data: dataCourse, isFetching: isFetchingCourse } = useQuery({
+	const { data: dataCourse, isPending: isPendingCourse } = useQuery({
 		queryKey: ['searchCourse', keywordCourse],
 		queryFn: () => getCourseKeyword(keywordCourse ?? ''),
 		enabled: !!keywordCourse,
 		staleTime: Infinity,
 		gcTime: Infinity,
 	});
-	const { data: dataProfessor, isFetching: isFetchingProfessor } = useQuery({
+	const { data: dataProfessor, isPending: isPendingProfessor } = useQuery({
 		queryKey: ['searchProfessor', keywordProfessor],
 		queryFn: () => getProfessorKeyword(keywordProfessor ?? ''),
 		enabled: !!keywordProfessor,
@@ -119,14 +120,16 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 					/>
 					{dropdown.course && (
 						<section className='dropdown'>
-							{isFetchingCourse ? (
-								<article>검색중입니다...</article>
-							) : (
-								dataCourse?.map((keyword: Keyword) => (
+							{isPendingCourse ? (
+								<TextBox message='검색중입니다...' />
+							) : dataCourse && dataCourse.length > 0 ? (
+								dataCourse.map((keyword: Keyword) => (
 									<span key={keyword.id} onClick={onClickCourse} className='option'>
 										{keyword.name}
 									</span>
 								))
+							) : (
+								<TextBox message='검색 결과가 없습니다.' />
 							)}
 						</section>
 					)}
@@ -143,14 +146,16 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 					/>
 					{dropdown.professor && (
 						<section className='dropdown'>
-							{isFetchingProfessor ? (
-								<article>검색중입니다...</article>
-							) : (
-								dataProfessor?.map((keyword: Keyword) => (
+							{isPendingProfessor ? (
+								<TextBox message='검색중입니다...' />
+							) : dataProfessor && dataProfessor.length > 0 ? (
+								dataProfessor.map((keyword: Keyword) => (
 									<span key={keyword.id} onClick={onClickProfessor} className='option'>
 										{keyword.name}
 									</span>
 								))
+							) : (
+								<TextBox message='검색 결과가 없습니다.' />
 							)}
 						</section>
 					)}
@@ -160,4 +165,4 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 	);
 };
 
-export default ContainerCourse;
+export default React.memo(ContainerCourse);

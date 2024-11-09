@@ -214,7 +214,7 @@ const DetailedInput = ({ type, closeHandler }: DetailedInfo) => {
 
 						{type === '역할' &&
 							(isPendingRole ? (
-								<TextBox message='검색 중...' />
+								<TextBox message='검색중입니다...' />
 							) : dataRole && dataRole.length > 0 ? (
 								dataRole.map((item: Keyword) => (
 									<li className='body1' key={item.id} onClick={event => onClickItem(event, item)}>
@@ -227,7 +227,7 @@ const DetailedInput = ({ type, closeHandler }: DetailedInfo) => {
 
 						{type === '태그' &&
 							(isPendingTag ? (
-								<TextBox message='검색 중...' />
+								<TextBox message='검색중입니다...' />
 							) : dataTag && dataTag.length > 0 ? (
 								dataTag.map((item: Keyword) => (
 									<li className='body1' key={item.id} onClick={event => onClickItem(event, item)}>
