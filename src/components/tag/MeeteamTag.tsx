@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import S from './MeeteamTag.styled';
 import { useRecoilState } from 'recoil';
 import { recruitInputState } from '../../atom';
@@ -39,7 +39,7 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 		}
 	};
 
-	const onChangeTagItem = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const onChangeTagItem = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = event.target;
 		setTagItem(value);
 
@@ -48,7 +48,7 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 		} else {
 			setIsDropdownVisible(true);
 		}
-	};
+	}, []);
 
 	const submitTagItem = () => {
 		setTagList(prev => {
