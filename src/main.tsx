@@ -58,11 +58,11 @@ const router = createBrowserRouter([
 		element: <App />,
 		children: [
 			{
-				path: '',
+				path: 'recruitment',
 				element: <RecruitPage />,
 			},
 			{
-				path: 'school',
+				path: '',
 				element: <PrivateRouter />,
 				children: [
 					{
