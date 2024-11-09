@@ -300,6 +300,7 @@ const InputRoleForm = (props: InputRoleObj) => {
 
 	const skillInputHandler = (event: React.MouseEvent<HTMLDivElement>) => {
 		event.stopPropagation();
+		setDropdown({ role: false, skill: !dropdown.skill });
 	};
 
 	const applyEllipsis = useCallback((container: HTMLDivElement) => {
@@ -494,7 +495,7 @@ const InputRoleForm = (props: InputRoleObj) => {
 							<section className='list-skill'>
 								{isPendingSkill ? (
 									<div className='body1-medium'>
-										<TextBox message='검색중입니다...' />
+										<TextBox message='검색어를 입력해주세요.' />
 									</div>
 								) : (
 									dataSkill?.map(elem => (
