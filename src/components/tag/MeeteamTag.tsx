@@ -20,20 +20,14 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
 	const keywordTag = useDebounce(tagItem, 500);
 
-	const { data, isSuccess, isFetching } = useQuery({
+	const { data, isSuccess, isPending } = useQuery({
 		queryKey: ['keywordTag', keywordTag],
 		queryFn: () => getTagKeyword(keywordTag),
-		staleTime: Infinity,
-		gcTime: Infinity,
 		enabled: !!tagItem,
 	});
 
 	const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		const target = event.currentTarget;
-
-		if (target.value.length > 0) {
-			setIsDropdownVisible(true);
-		}
 
 		if (target.value.length !== 0 && event.key === 'Enter') {
 			event.preventDefault();
@@ -99,6 +93,20 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 		}
 	}, [tags, setFormData]);
 
+	console.log(isDropdownVisible);
+
+	// onChange 함수 만들기
+	const onChangeTagItem = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const { value } = event.target;
+		setTagItem(value);
+
+		if (value.length === 0) {
+			setIsDropdownVisible(false);
+		} else {
+			setIsDropdownVisible(true);
+		}
+	};
+
 	return (
 		<S.MeeteamTag ref={dropdownRef}>
 			<section className='tag__box'>
@@ -107,7 +115,7 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 					placeholder={'태그는 최대 5개까지 가능합니다.'}
 					tabIndex={2}
 					disabled={tagList.length < 20 ? false : true}
-					onChange={event => setTagItem(event.target.value)}
+					onChange={onChangeTagItem}
 					value={tagItem}
 					onKeyPress={onKeyPress}
 					className='tag-input body1-medium'
@@ -115,7 +123,8 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 				<img src={Search} className='icon-search' alt='검색 아이콘' />
 				{isDropdownVisible && (
 					<div className='tag-dropdown'>
-						{isSuccess &&
+						{!isPending &&
+							data &&
 							data?.map((tag: Keyword) => (
 								<span
 									className='body1-medium option'
@@ -138,11 +147,6 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 									</span>
 									<span className='body1-medium'>{tagItem}</span>
 								</section>
-							</section>
-						)}
-						{isFetching && keywordTag.length === 0 && (
-							<section className='no-result'>
-								<span className='body1-medium'>태그를 입력해주세요.</span>
 							</section>
 						)}
 					</div>
