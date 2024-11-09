@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getTagKeyword } from '../../service';
 import { Search, XBtn } from '../../assets';
 import { Keyword, RecruitTags } from '../../types';
+import { TextBox } from '../index';
 
 interface RecruitTagListProps {
 	tags: RecruitTags[] | undefined;
@@ -35,6 +36,17 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 		}
 		if (event.key === 'Enter') {
 			event.preventDefault();
+		}
+	};
+
+	const onChangeTagItem = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const { value } = event.target;
+		setTagItem(value);
+
+		if (value.length === 0) {
+			setIsDropdownVisible(false);
+		} else {
+			setIsDropdownVisible(true);
 		}
 	};
 
@@ -93,20 +105,6 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 		}
 	}, [tags, setFormData]);
 
-	console.log(isDropdownVisible);
-
-	// onChange 함수 만들기
-	const onChangeTagItem = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const { value } = event.target;
-		setTagItem(value);
-
-		if (value.length === 0) {
-			setIsDropdownVisible(false);
-		} else {
-			setIsDropdownVisible(true);
-		}
-	};
-
 	return (
 		<S.MeeteamTag ref={dropdownRef}>
 			<section className='tag__box'>
@@ -122,32 +120,37 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 				/>
 				<img src={Search} className='icon-search' alt='검색 아이콘' />
 				{isDropdownVisible && (
-					<div className='tag-dropdown'>
-						{!isPending &&
-							data &&
-							data?.map((tag: Keyword) => (
-								<span
-									className='body1-medium option'
-									key={tag.id}
-									onClick={event => onClickTagOptions(tag.name, event)}
-								>
-									{tag.name}
-								</span>
-							))}
-						{isSuccess && data?.length === 0 && (
-							<section className='no-result'>
-								<span className='body1-medium'>검색 결과가 없습니다.</span>
-								<span className='body1-medium'>해당 태그를 새로 생성할까요?</span>
-								<section className='container-btn'>
-									<span
-										className='btn-create txt2'
-										onClick={event => onClickTagOptions(tagItem, event)}
-									>
-										생성하기
-									</span>
-									<span className='body1-medium'>{tagItem}</span>
-								</section>
-							</section>
+					<div className='tag-dropdown body1-medium'>
+						{isPending ? (
+							<TextBox message='검색중입니다...' />
+						) : (
+							<>
+								{data && data.length > 0
+									? data.map((tag: Keyword) => (
+											<span
+												className='body1-medium option'
+												key={tag.id}
+												onClick={event => onClickTagOptions(tag.name, event)}
+											>
+												{tag.name}
+											</span>
+										))
+									: isSuccess && (
+											<section className='no-result'>
+												<span className='body1-medium'>검색 결과가 없습니다.</span>
+												<span className='body1-medium'>해당 태그를 새로 생성할까요?</span>
+												<section className='container-btn'>
+													<span
+														className='btn-create txt2'
+														onClick={event => onClickTagOptions(tagItem, event)}
+													>
+														생성하기
+													</span>
+													<span className='body1-medium'>{tagItem}</span>
+												</section>
+											</section>
+										)}
+							</>
 						)}
 					</div>
 				)}
@@ -168,4 +171,4 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 	);
 };
 
-export default MeeteamTag;
+export default React.memo(MeeteamTag);
