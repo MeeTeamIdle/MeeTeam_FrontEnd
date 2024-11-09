@@ -65,10 +65,6 @@ const DropdownDetail = styled.section<{ $isDetailSelected: boolean }>`
 			text-align: center;
 		}
 
-		@media (max-width: 390px) {
-			width: 34rem;
-		}
-
 		.sidebar {
 			display: flex;
 			width: 10rem;
@@ -310,6 +306,11 @@ const DropdownDetail = styled.section<{ $isDetailSelected: boolean }>`
 					width: 100%;
 				}
 			}
+		}
+
+		.container-dropdown {
+			position: absolute;
+			width: 449px;
 		}
 	}
 `;

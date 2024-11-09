@@ -32,6 +32,7 @@ import useScrollToTop from './useScrollToTop';
 import { useOutsideClick } from './useOutsideClick';
 import { useFocusToTop } from './useFocusOnTop';
 import { useFixModalBackground } from './useFixModalBackground';
+import useCheckDevice from './useCheckDevice';
 
 export {
 	useCheckExist,
@@ -67,4 +68,5 @@ export {
 	useOutsideClick,
 	useFocusToTop,
 	useFixModalBackground,
+	useCheckDevice,
 };
