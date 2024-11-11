@@ -49,7 +49,7 @@ const PortfolioDetailsPage = React.lazy(
 );
 const PortfolioEditPage = React.lazy(() => import('./pages/portfolio/edit/PortfolioEditPage'));
 const PortfolioManagementPage = React.lazy(
-	() => import('./pages/portfolio/management/PortfolioManagmentPage')
+	() => import('./pages/portfolio/management/PortfolioManagementPage')
 );
 
 const router = createBrowserRouter([
