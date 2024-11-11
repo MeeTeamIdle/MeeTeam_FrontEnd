@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import S from './Progress.styled';
 
 interface Progress {
@@ -9,17 +9,17 @@ interface Progress {
 const Progress = ({ denominator, numerator }: Progress) => {
 	const [progressValue, setProgressValue] = useState<number>(0);
 
-	const getProgressWidth = () => {
+	const getProgressWidth = useMemo(() => {
 		return Math.floor((numerator / denominator) * 100);
-	};
+	}, [denominator, numerator]);
 
 	useEffect(() => {
-		setProgressValue(getProgressWidth());
-	}, [denominator, numerator]);
+		setProgressValue(getProgressWidth);
+	}, [denominator, numerator, getProgressWidth]);
 
 	return (
 		<S.ProgressBackground>
-			<S.Progress progression={progressValue} />
+			<S.Progress $progression={progressValue} />
 		</S.ProgressBackground>
 	);
 };

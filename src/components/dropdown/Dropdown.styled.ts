@@ -3,8 +3,6 @@ import styled from 'styled-components';
 interface IDropdown {
 	$showDropdown?: boolean;
 	$scope?: boolean;
-	$isCheck?: boolean;
-	$isScopeSelected?: boolean;
 	$isCategorySelected?: boolean;
 }
 
@@ -35,11 +33,6 @@ const Dropdown = styled.div<IDropdown>`
 
 			.value {
 				font-size: 1.6rem;
-			}
-
-			.scope-selected {
-				color: ${props => (props.$isScopeSelected ? '#5877FC' : '#373f41')};
-				font-weight: ${props => (props.$isScopeSelected ? '600' : '500')};
 			}
 
 			.category-selected {
@@ -197,53 +190,6 @@ const Dropdown = styled.div<IDropdown>`
 						display: flex;
 						width: 100%;
 						gap: 2rem;
-
-						.container-inputs {
-							width: 100%;
-							position: relative;
-
-							input {
-								height: 4.8rem;
-								padding: 1.2rem 1.6rem;
-								flex: 1 0 0;
-								box-sizing: border-box;
-								margin: 0;
-								width: 100%;
-								border-radius: 1rem;
-								font-size: 1.6rem;
-								border: 1px solid #8e8e8e;
-								background: ${props => (props.$isCheck ? 'transparent' : '#e3e3e3')};
-
-								&:hover {
-									border: 1px solid #5877fc;
-									transition: 0.2s ease-in-out;
-								}
-								&:focus {
-									outline: none;
-									border: 1px solid #5877fc;
-								}
-							}
-
-							.dropdown {
-								position: absolute;
-								width: 100%;
-								display: flex;
-								flex-direction: column;
-								font-size: 1.4rem;
-								color: #8e8e8e;
-								gap: 1.2rem;
-								padding: 1.2rem 1.6rem;
-								z-index: 401;
-								background-color: #fff;
-								border-radius: 1rem;
-								border: 1px solid #e3e3e3;
-								box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
-
-								span {
-									cursor: pointer;
-								}
-							}
-						}
 					}
 				}
 

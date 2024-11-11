@@ -1,23 +1,14 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { Suspense, useEffect, useMemo } from 'react';
 import S from './RecruitDetailPage.styled';
 import {
-	CommentInput,
-	Comment,
 	TitleInfo,
 	RecruitInfo,
 	RecruitDescription,
-	RecruitRoles,
-	RecruitTag,
 	LinkToList,
 	WriterFooter,
 	ApplierFooter,
-	ApplyModal,
-	ConfirmModal,
-	FinalModal,
 	ClosedFooter,
-	ApplyCancel,
-	ApplyClose,
-	PostingDelete,
+	LoadingBackground,
 } from '../../../components';
 import { calculateDate, fixModalBackground } from '../../../utils';
 import { JsxElementComponentProps } from '../../../types';
@@ -38,6 +29,35 @@ import {
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLogin } from '../../../hooks';
 
+const ApplyModal = React.lazy(
+	() => import('../../../components/recruit/recruitDetail/modal/ApplyModal')
+);
+const ConfirmModal = React.lazy(
+	() => import('../../../components/recruit/recruitDetail/modal/ConfirmModal')
+);
+const FinalModal = React.lazy(
+	() => import('../../../components/recruit/recruitDetail/modal/FinalModal')
+);
+const RecruitRoles = React.lazy(
+	() => import('../../../components/recruit/recruitDetail/recruitRoles/RecruitRoles')
+);
+const RecruitTag = React.lazy(
+	() => import('../../../components/recruit/recruitDetail/recruitTag/RecruitTag')
+);
+const ApplyCancel = React.lazy(
+	() => import('../../../components/recruit/recruitDetail/modal/applyCancel/ApplyCancel')
+);
+const ApplyClose = React.lazy(
+	() => import('../../../components/recruit/recruitDetail/modal/applyClose/ApplyClose')
+);
+const PostingDelete = React.lazy(
+	() => import('../../../components/recruit/recruitDetail/modal/postingDelete/PostingDelete')
+);
+const Comment = React.lazy(() => import('../../../components/comment/comment/Comment'));
+const CommentInput = React.lazy(
+	() => import('../../../components/comment/commentInput/CommentInput')
+);
+
 const stepLists: JsxElementComponentProps = {
 	0: <ApplyModal />,
 	1: <ConfirmModal />,
@@ -46,20 +66,22 @@ const stepLists: JsxElementComponentProps = {
 
 const RecruitDetailPage = () => {
 	const { id } = useParams();
+	const { isLogin } = useLogin();
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const pageNum = Number(id);
+
 	const user = useRecoilValue(userState);
-	const [isModal, setIsModal] = useRecoilState(applyModalState);
 	const isCancel = useRecoilValue(applyCancelModalState);
 	const isClose = useRecoilValue(applyCloseModalState);
 	const isDelete = useRecoilValue(commentDeleteModalState);
 	const isNeedLogin = useRecoilValue(needLoginModalState);
+	const isPostingDelete = useRecoilValue(recruitPostingDeleteModalState);
+
+	const [isModal, setIsModal] = useRecoilState(applyModalState);
 	const [step, setIsApplyStep] = useRecoilState(applyStepState);
 	const [isGoProfile, setGoProfile] = useRecoilState(goProfileState);
-	const isPostingDelete = useRecoilValue(recruitPostingDeleteModalState);
-	const queryClient = useQueryClient();
 
-	const { isLogin } = useLogin();
 	const { data: detailedData, isSuccess } = useQuery({
 		queryKey: ['detailedPage', { pageNum, isLogin }],
 		queryFn: () => getPostingData({ pageNum, isLogin }),
@@ -73,7 +95,7 @@ const RecruitDetailPage = () => {
 				return total + 1 + (comment.replies ? comment.replies.length : 0);
 			}, 0);
 		}
-	}, [detailedData?.comments]);
+	}, [detailedData]);
 
 	const onClickEditPage = async () => {
 		navigate(`/recruitment/postings/edit/${pageNum}`);
@@ -123,8 +145,12 @@ const RecruitDetailPage = () => {
 						isClosed={detailedData.isClosed}
 					/>
 					<RecruitDescription content={detailedData.content} />
-					<RecruitRoles roles={detailedData.recruitmentRoles} />
-					<RecruitTag tags={detailedData.tags} />
+					<Suspense fallback={<LoadingBackground />}>
+						<RecruitRoles roles={detailedData.recruitmentRoles} />
+					</Suspense>
+					<Suspense fallback={<LoadingBackground />}>
+						<RecruitTag tags={detailedData.tags} />
+					</Suspense>
 					<LinkToList />
 					<article className='wrapper-comments'>
 						<section className='container-title'>
@@ -132,46 +158,56 @@ const RecruitDetailPage = () => {
 							<span>{totalCommentsCount}</span>
 						</section>
 						<hr />
-						<section className='container-comments'>
-							<ul className='container-comments__lists'>
-								{isSuccess &&
-									detailedData.comments.map((comment, _) => {
-										return <Comment key={comment.id} {...comment} />;
-									})}
-							</ul>
-							{isLogin ? (
-								<CommentInput />
-							) : (
-								<section className='need-login'>
-									<span className='body1-semibold'>
-										<span className='body1-semibold login' onClick={() => navigate('/signin')}>
-											로그인
-										</span>{' '}
-										후 댓글을 달아보세요!
-									</span>
-								</section>
-							)}
-						</section>
+						<Suspense fallback={<LoadingBackground />}>
+							<section className='container-comments'>
+								<ul className='container-comments__lists'>
+									{isSuccess &&
+										detailedData.comments.map(comment => {
+											return <Comment key={comment.id} {...comment} />;
+										})}
+								</ul>
+								{isLogin ? (
+									<CommentInput />
+								) : (
+									<section className='need-login'>
+										<span className='body1-semibold'>
+											<span className='body1-semibold login' onClick={() => navigate('/signin')}>
+												로그인
+											</span>{' '}
+											후 댓글을 달아보세요!
+										</span>
+									</section>
+								)}
+							</section>
+						</Suspense>
 					</article>
 					{isModal && (
-						<form onSubmit={submitHandler}>
-							<section className='modal-background'>{stepLists[step]}</section>
-						</form>
+						<Suspense fallback={<LoadingBackground />}>
+							<form onSubmit={submitHandler}>
+								<section className='modal-background'>{stepLists[step]}</section>
+							</form>
+						</Suspense>
 					)}
 					{isCancel && (
-						<section className='modal-background'>
-							<ApplyCancel pageNum={pageNum} />
-						</section>
+						<Suspense fallback={<LoadingBackground />}>
+							<section className='modal-background'>
+								<ApplyCancel pageNum={pageNum} />
+							</section>
+						</Suspense>
 					)}
 					{isClose && (
-						<section className='modal-background'>
-							<ApplyClose />
-						</section>
+						<Suspense fallback={<LoadingBackground />}>
+							<section className='modal-background'>
+								<ApplyClose />
+							</section>
+						</Suspense>
 					)}
 					{isPostingDelete && (
-						<section className='modal-background'>
-							<PostingDelete />
-						</section>
+						<Suspense fallback={<LoadingBackground />}>
+							<section className='modal-background'>
+								<PostingDelete />
+							</section>
+						</Suspense>
 					)}
 				</S.RecruitDetailPage>
 			)}

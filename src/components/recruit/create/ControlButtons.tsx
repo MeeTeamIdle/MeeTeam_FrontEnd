@@ -1,17 +1,27 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import { useSetRecoilState } from 'recoil';
-// import { recruitInputState } from '../../../atom';
-// import { INIT_FORM_DATA } from '../../../constant';
+import { useRecoilValue } from 'recoil';
+import { validState } from '../../../atom';
 
 const ControlButtons = ({ id }: { id?: string }) => {
 	const location = useLocation();
 	const navigate = useNavigate();
-	// const setFormData = useSetRecoilState(recruitInputState);
+	const validCheck = useRecoilValue(validState);
+
+	const postAvailable = React.useMemo(
+		() =>
+			validCheck.isCategory &&
+			validCheck.isDeadline &&
+			validCheck.isProcedure &&
+			validCheck.isScope &&
+			validCheck.isContent &&
+			validCheck.isTitle &&
+			validCheck.isRole &&
+			validCheck.isContent,
+		[validCheck]
+	);
 
 	const cancelHandler = async () => {
-		// await setFormData(INIT_FORM_DATA);
-
 		if (location.pathname.includes('edit')) {
 			navigate(`/recruitment/postings/${id}`);
 		} else {
@@ -24,11 +34,15 @@ const ControlButtons = ({ id }: { id?: string }) => {
 			<button type='button' className='cancel-btn' onClick={cancelHandler}>
 				취소
 			</button>
-			<button type='submit' className='submit-btn'>
+			<button
+				type='submit'
+				className={`submit-btn ${!postAvailable ? 'post-disabled' : ''}`}
+				disabled={!postAvailable}
+			>
 				{location.pathname.includes('edit') ? '저장' : '등록'}
 			</button>
 		</section>
 	);
 };
 
-export default ControlButtons;
+export default React.memo(ControlButtons);

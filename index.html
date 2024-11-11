@@ -34,9 +34,19 @@
 			function gtag() {
 				dataLayer.push(arguments);
 			}
+
 			gtag('js', new Date());
 
-			gtag('config', 'G-VBQGWM8M4D');
+			const userState = JSON.parse(localStorage.getItem('userState'));
+			const userId = userState?.userId;
+
+			if (userId) {
+				gtag('config', 'G-VBQGWM8M4D', {
+					'user-id': userId,
+				});
+			} else {
+				gtag('config', 'G-VBQGWM8M4D');
+			}
 		</script>
 	</head>
 	<body>
