@@ -7,7 +7,7 @@ import {
 	ProfileImage,
 	SkillTag,
 } from '../../../components';
-import { useReadProfile } from '../../../hooks';
+import { useReadProfile, useResponsiveWeb } from '../../../hooks';
 import { useParams, useNavigate } from 'react-router';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../../../atom';
@@ -37,10 +37,13 @@ const ProfileDetailsPage = () => {
 		? user?.universityEmail?.isPublic
 		: user?.subEmail?.isPublic;
 
+	// 반응형
+	const [isMobilePort, isTabletPort] = useResponsiveWeb();
+
 	return (
 		isSuccess && (
 			<S.ProfileLayout>
-				<S.ProfileHeader>
+				<S.ProfileHeader $isTabletPort={isTabletPort} $isMobilePort={isMobilePort}>
 					<ProfileImage userId={userId} size='14rem' url={user?.imageUrl} />
 					<S.ProfileColumn>
 						<div className='profile-header__row'>
@@ -58,7 +61,13 @@ const ProfileDetailsPage = () => {
 						<h6>{user?.introduction}</h6>
 					</S.ProfileColumn>
 					{userInfo?.userId === userId && (
-						<DefaultBtn type='button' title='편집' handleClick={() => navigate('/profile/edit')} />
+						<div className='profile-header_btn'>
+							<DefaultBtn
+								type='button'
+								title='편집'
+								handleClick={() => navigate('/profile/edit')}
+							/>
+						</div>
 					)}
 				</S.ProfileHeader>
 
@@ -185,7 +194,7 @@ const ProfileDetailsPage = () => {
 
 					<S.ProfileArticle>
 						<S.ProfileTitle>링크</S.ProfileTitle>
-						<S.ProfileColumn>
+						<S.ProfileColumn $isTabletPort={isTabletPort} $isMobilePort={isMobilePort}>
 							{user?.links?.map((link, index) => (
 								<S.ProfileRow key={index} $gap='3.65rem'>
 									<LinkDetails {...link} />
