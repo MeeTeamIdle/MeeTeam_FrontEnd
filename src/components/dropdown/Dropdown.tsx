@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import S from './Dropdown.styled';
 import { useOutsideClick } from '../../hooks';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { applicantFilter, recruitFilterState } from '../../atom';
+import { applicantFilter, recruitFilterState, recruitFilterStateAuth } from '../../atom';
 import { ManageRole } from '../../types';
 import { DropdownArrowUp, DropdownArrow } from '../../assets';
 import { useSearchParams } from 'react-router-dom';
@@ -39,6 +39,7 @@ const Dropdown = ({ data, initialData, category, applicant, roleObj }: Dropdown)
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
 	const setApplicantFilter = useSetRecoilState(applicantFilter);
 	const [filterState, setFilterState] = useRecoilState(recruitFilterState);
+	const [filterStateAuth, setFilterStateAuth] = useRecoilState(recruitFilterStateAuth);
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	const getKeyByValue = (obj: keyObj, value: number) => {
@@ -53,10 +54,12 @@ const Dropdown = ({ data, initialData, category, applicant, roleObj }: Dropdown)
 	const onClickList = (event: React.MouseEvent<HTMLElement>, id?: number) => {
 		event.stopPropagation();
 		const { innerText } = event.target as HTMLElement;
+
 		setCurrentValue(innerText);
+
 		if (applicant && id) {
 			setApplicantFilter(id);
-		} else {
+		} else if (location.pathname === '/') {
 			if (innerText === '모든 유형') {
 				searchParams.delete('category');
 				setSearchParams(searchParams);
@@ -67,7 +70,19 @@ const Dropdown = ({ data, initialData, category, applicant, roleObj }: Dropdown)
 			}
 			setFilterState(prev => ({ ...prev, category: Number(searchParams.get('category')) }));
 			setIsCategorySelected(true);
+		} else if (location.pathname === '/campus') {
+			if (innerText === '모든 유형') {
+				searchParams.delete('category');
+				setSearchParams(searchParams);
+				setShowDropdown(false);
+			} else {
+				searchParams.set('category', categoryObj[innerText].toString());
+				setSearchParams(searchParams);
+			}
+			setFilterStateAuth(prev => ({ ...prev, category: Number(searchParams.get('category')) }));
+			setIsCategorySelected(true);
 		}
+
 		setShowDropdown(false);
 	};
 
@@ -89,6 +104,17 @@ const Dropdown = ({ data, initialData, category, applicant, roleObj }: Dropdown)
 			setIsCategorySelected(false);
 		}
 	}, [filterState.category, category]);
+
+	useEffect(() => {
+		if (category && filterStateAuth.category !== null) {
+			setCurrentValue(getKeyByValue(categoryObj, filterStateAuth.category));
+			setIsCategorySelected(true);
+		}
+		if (category && filterStateAuth.category === null) {
+			setCurrentValue('유형');
+			setIsCategorySelected(false);
+		}
+	}, [filterStateAuth.category, category]);
 
 	return (
 		<S.Dropdown

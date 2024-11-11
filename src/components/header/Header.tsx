@@ -29,7 +29,7 @@ const Header = () => {
 	const { data: profileImage } = useReadProfileImage(isLogin);
 
 	const handleRecruitBoardButtonClick = () => {
-		navigate('/recruitment');
+		navigate('/');
 		setFilterState({
 			scope: 1,
 			category: null,
@@ -53,17 +53,17 @@ const Header = () => {
 
 	const handleLogOutButtonClick = () => {
 		signOut();
-		navigate('/recruitment');
+		navigate('/');
 		setOpenDrop(false);
 	};
 
 	const handleLogoClick = () => {
 		if (!isLogin) {
-			navigate('/recruitment');
+			navigate('/');
 			return;
 		}
 
-		navigate('/');
+		navigate('/campus');
 		setFilterState({
 			scope: 2,
 			category: null,
@@ -80,7 +80,7 @@ const Header = () => {
 	useOutsideClick(dropdownRef, openDrop, setOpenDrop);
 
 	useEffect(() => {
-		if (location.pathname === '/recruitment') {
+		if (location.pathname === '/') {
 			setIsHere({ recruit: true, mySchool: false, inform: false });
 		} else {
 			setIsHere({ recruit: false, mySchool: false, inform: false });

@@ -87,11 +87,14 @@ const RecruitPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	const { data: posts } = useQuery({
-		queryKey: [location.pathname, { filterState, page }],
+		queryKey: [
+			location.pathname,
+			{ filterState: location.pathname === '/' ? filterState : filterStateAuth, page },
+		],
 		queryFn: async () => {
-			if (location.pathname === '/recruitment') {
+			if (location.pathname === '/') {
 				return await getPostList({ filterState, page });
-			} else if (location.pathname === '/') {
+			} else if (location.pathname === '/campus') {
 				return await getAuthPostList({ filterState: filterStateAuth, page });
 			}
 		},
@@ -119,12 +122,12 @@ const RecruitPage = () => {
 	};
 
 	const onClickClear = useCallback(() => {
-		if (location.pathname === '/recruitment') {
+		if (location.pathname === '/') {
 			setFilterState({
 				scope: 1,
 				...commonInitialFilterState,
 			});
-		} else if (location.pathname === '/') {
+		} else if (location.pathname === '/campus') {
 			setFilterStateAuth({
 				scope: 2,
 				...commonInitialFilterState,
@@ -321,7 +324,7 @@ const RecruitPage = () => {
 			professor: searchParams.get('professor'),
 		};
 
-		if (location.pathname === '/recruitment') {
+		if (location.pathname === '/') {
 			setFilterState({
 				scope: 1,
 				category: queryParams.category ? Number(queryParams.category) : null,
@@ -333,7 +336,7 @@ const RecruitPage = () => {
 				course: queryParams.course ? Number(queryParams.course) : null,
 				professor: queryParams.professor ? Number(queryParams.professor) : null,
 			});
-		} else if (location.pathname === '/') {
+		} else if (location.pathname === '/campus') {
 			setFilterStateAuth({
 				scope: 2,
 				category: queryParams.category ? Number(queryParams.category) : null,
