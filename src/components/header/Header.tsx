@@ -59,6 +59,7 @@ const Header = () => {
 
 	const handleLogoClick = () => {
 		if (!isLogin) {
+			navigate('/recruitment');
 			return;
 		}
 
