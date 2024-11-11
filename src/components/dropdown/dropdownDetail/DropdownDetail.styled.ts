@@ -13,7 +13,6 @@ const DropdownDetail = styled.section<{ $isDetailSelected: boolean }>`
 	color: #373f41;
 	font-weight: 400;
 	height: 4.8rem;
-	cursor: pointer;
 
 	.selected {
 		color: ${props => (props.$isDetailSelected ? '#5877FC' : '#373f41')};
@@ -64,10 +63,6 @@ const DropdownDetail = styled.section<{ $isDetailSelected: boolean }>`
 			padding: 0.8rem;
 			font-size: 0.8rem;
 			text-align: center;
-		}
-
-		@media (max-width: 390px) {
-			width: 34rem;
 		}
 
 		.sidebar {
@@ -311,6 +306,11 @@ const DropdownDetail = styled.section<{ $isDetailSelected: boolean }>`
 					width: 100%;
 				}
 			}
+		}
+
+		.container-dropdown {
+			position: absolute;
+			width: 449px;
 		}
 	}
 `;

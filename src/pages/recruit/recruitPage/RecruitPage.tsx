@@ -27,7 +27,13 @@ import {
 	recruitFilterStateAuth,
 	signupModalState,
 } from '../../../atom';
-import { useFixModalBackground, useFocusToTop, useLogin, useOutsideClick } from '../../../hooks';
+import {
+	useCheckDevice,
+	useFixModalBackground,
+	useFocusToTop,
+	useLogin,
+	useOutsideClick,
+} from '../../../hooks';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { getAuthPostList, getPostList } from '../../../service/recruit/board';
 import { useQuery } from '@tanstack/react-query';
@@ -49,6 +55,7 @@ const RecruitPage = () => {
 	const fieldRef = useRef<HTMLDivElement | null>(null);
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
 	const { isLogin } = useLogin();
+	const { isMobile } = useCheckDevice();
 
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [searchKeyword, setSearchKeyword] = useState<string>('');
@@ -80,11 +87,14 @@ const RecruitPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	const { data: posts } = useQuery({
-		queryKey: [location.pathname, { filterState, page }],
+		queryKey: [
+			location.pathname,
+			{ filterState: location.pathname === '/' ? filterState : filterStateAuth, page },
+		],
 		queryFn: async () => {
 			if (location.pathname === '/') {
 				return await getPostList({ filterState, page });
-			} else if (location.pathname === '/school') {
+			} else if (location.pathname === '/campus') {
 				return await getAuthPostList({ filterState: filterStateAuth, page });
 			}
 		},
@@ -117,7 +127,7 @@ const RecruitPage = () => {
 				scope: 1,
 				...commonInitialFilterState,
 			});
-		} else if (location.pathname === '/school') {
+		} else if (location.pathname === '/campus') {
 			setFilterStateAuth({
 				scope: 2,
 				...commonInitialFilterState,
@@ -326,7 +336,7 @@ const RecruitPage = () => {
 				course: queryParams.course ? Number(queryParams.course) : null,
 				professor: queryParams.professor ? Number(queryParams.professor) : null,
 			});
-		} else if (location.pathname === '/school') {
+		} else if (location.pathname === '/campus') {
 			setFilterStateAuth({
 				scope: 2,
 				category: queryParams.category ? Number(queryParams.category) : null,
@@ -365,16 +375,18 @@ const RecruitPage = () => {
 								initialData='유형'
 								category
 							/>
-							<DropdownDetail
-								isOpen={isOpen}
-								dropdownRef={dropdownRef}
-								isOpenDetail={isOpenDetail}
-								isDetailSelected={isDetailSelected}
-								onClick={onClickDetailed}
-								handleClose={closeHandler}
-								handleChildDropdown={handlerChildDropdown}
-								handleClickDetails={onClickDetails}
-							/>
+							{!isMobile && (
+								<DropdownDetail
+									isOpen={isOpen}
+									dropdownRef={dropdownRef}
+									isOpenDetail={isOpenDetail}
+									isDetailSelected={isDetailSelected}
+									onClick={onClickDetailed}
+									handleClose={closeHandler}
+									handleChildDropdown={handlerChildDropdown}
+									handleClickDetails={onClickDetails}
+								/>
+							)}
 							<ClearConditions onClick={onClickClear} />
 						</section>
 						<SearchBar

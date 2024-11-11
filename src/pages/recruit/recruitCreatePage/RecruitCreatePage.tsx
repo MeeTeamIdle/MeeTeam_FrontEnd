@@ -71,7 +71,11 @@ const RecruitCreatePage = () => {
 				...prev,
 				isSubmitted: false,
 			}));
-			navigate(`/recruitment/postings/${data?.recruitmentPostId}`);
+			if (formData.scope === '교내') {
+				navigate(`/campus/recruitment/postings/${data?.recruitmentPostId}`);
+			} else {
+				navigate(`/recruitment/postings/${data?.recruitmentPostId}`);
+			}
 		},
 		onError: () => {
 			setIsSubmit(prev => ({
@@ -87,7 +91,11 @@ const RecruitCreatePage = () => {
 				...prev,
 				isSubmitted: false,
 			}));
-			navigate(`/recruitment/postings/${pageNum}`);
+			if (formData.scope === '교내') {
+				navigate(`/campus/recruitment/postings/${pageNum}`);
+			} else {
+				navigate(`/recruitment/postings/${pageNum}`);
+			}
 		},
 		onError: () => {
 			setIsSubmit(prev => ({

@@ -93,6 +93,7 @@ import ClearConditions from './recruit/recruitBoard/clear/ClearConditions';
 import SearchBar from './recruit/recruitBoard/searchBar/SearchBar';
 import FieldPopup from './recruit/recruitBoard/fieldPopup/FieldPopup';
 import LoadingBackground from './loading/LoadingBackground';
+import TextBox from './dropdown/textBox/TextBox';
 
 export {
 	Header,
@@ -190,4 +191,5 @@ export {
 	SearchBar,
 	FieldPopup,
 	LoadingBackground,
+	TextBox,
 };

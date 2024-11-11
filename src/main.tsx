@@ -62,12 +62,16 @@ const router = createBrowserRouter([
 				element: <RecruitPage />,
 			},
 			{
-				path: 'school',
+				path: 'campus',
 				element: <PrivateRouter />,
 				children: [
 					{
 						path: '',
 						element: <RecruitPage />,
+					},
+					{
+						path: 'recruitment/postings/:id',
+						element: <RecruitDetailPage />,
 					},
 				],
 			},

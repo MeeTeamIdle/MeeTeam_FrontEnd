@@ -2,9 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import S from './Header.styled';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { DropdownArrow } from '../../assets';
-import { ModalBackground, NeedLogin, ProfileImage } from '..';
+import { ProfileImage } from '..';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { recruitFilterState, userState, loginState, needLoginModalState } from '../../atom';
+import { recruitFilterState, userState, loginState } from '../../atom';
 import { useSignOut, useLogin, useReadProfileImage, useOutsideClick } from '../../hooks';
 
 const Header = () => {
@@ -21,7 +21,6 @@ const Header = () => {
 		inform: false,
 	});
 	const [userInfo, setUserState] = useRecoilState(userState);
-	const [needLoginModal, setNeedLoginModal] = useRecoilState(needLoginModalState);
 
 	const setFilterState = useSetRecoilState(recruitFilterState);
 	const setLoginState = useSetRecoilState(loginState);
@@ -33,21 +32,6 @@ const Header = () => {
 		navigate('/');
 		setFilterState({
 			scope: 1,
-			category: null,
-			field: null,
-			skill: [],
-			role: [],
-			tag: [],
-			keyword: '',
-			course: null,
-			professor: null,
-		});
-	};
-
-	const navigateToMySchool = () => {
-		navigate('/school');
-		setFilterState({
-			scope: 2,
 			category: null,
 			field: null,
 			skill: [],
@@ -73,21 +57,31 @@ const Header = () => {
 		setOpenDrop(false);
 	};
 
-	const handleMySchoolButtonClick = () => {
-		if (isLogin) {
-			navigateToMySchool();
-		} else {
-			setNeedLoginModal({ isOpen: true, type: 'SCHOOL_RECRUIT' });
+	const handleLogoClick = () => {
+		if (!isLogin) {
+			navigate('/');
+			return;
 		}
+
+		navigate('/campus');
+		setFilterState({
+			scope: 2,
+			category: null,
+			field: null,
+			skill: [],
+			role: [],
+			tag: [],
+			keyword: '',
+			course: null,
+			professor: null,
+		});
 	};
 
 	useOutsideClick(dropdownRef, openDrop, setOpenDrop);
 
 	useEffect(() => {
-		if (location.pathname === `/recruitment/postings/${id}` || location.pathname === '/') {
+		if (location.pathname === '/') {
 			setIsHere({ recruit: true, mySchool: false, inform: false });
-		} else if (location.pathname === '/school') {
-			setIsHere({ recruit: false, mySchool: true, inform: false });
 		} else {
 			setIsHere({ recruit: false, mySchool: false, inform: false });
 		}
@@ -97,7 +91,7 @@ const Header = () => {
 		<S.Header $isLogin={isLogin}>
 			<div className='header'>
 				<section className='header-leftside'>
-					<div className='header__logo' onClick={handleRecruitBoardButtonClick}>
+					<div className='header__logo' onClick={handleLogoClick}>
 						<img
 							className='logo'
 							src='/logo_typo_large.webp'
@@ -114,12 +108,6 @@ const Header = () => {
 							onClick={handleRecruitBoardButtonClick}
 						>
 							구인게시판
-						</div>
-						<div
-							className={`header__navigation--navi-text ${isHere.mySchool ? 'here' : ''}`}
-							onClick={handleMySchoolButtonClick}
-						>
-							교내게시판
 						</div>
 					</div>
 				</section>
@@ -186,11 +174,6 @@ const Header = () => {
 					</div>
 				</section>
 			</div>
-			{needLoginModal.isOpen && (
-				<ModalBackground>
-					<NeedLogin type={needLoginModal.type} />
-				</ModalBackground>
-			)}
 		</S.Header>
 	);
 };

@@ -6,6 +6,7 @@ import { getCourseKeyword, getProfessorKeyword } from '../../../../../service';
 import { useRecoilState } from 'recoil';
 import { recruitInputState } from '../../../../../atom';
 import { Keyword } from '../../../../../types';
+import { TextBox } from '../../../../index';
 
 interface ContainerCourseProps {
 	course?: string | null;
@@ -26,14 +27,14 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 	});
 	const keywordCourse = useDebounce(name.course, 500);
 	const keywordProfessor = useDebounce(name.professor, 500);
-	const { data: dataCourse, isFetching: isFetchingCourse } = useQuery({
+	const { data: dataCourse, isPending: isPendingCourse } = useQuery({
 		queryKey: ['searchCourse', keywordCourse],
 		queryFn: () => getCourseKeyword(keywordCourse ?? ''),
 		enabled: !!keywordCourse,
 		staleTime: Infinity,
 		gcTime: Infinity,
 	});
-	const { data: dataProfessor, isFetching: isFetchingProfessor } = useQuery({
+	const { data: dataProfessor, isPending: isPendingProfessor } = useQuery({
 		queryKey: ['searchProfessor', keywordProfessor],
 		queryFn: () => getProfessorKeyword(keywordProfessor ?? ''),
 		enabled: !!keywordProfessor,
@@ -45,11 +46,20 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 		const keyword = event.target.value;
 		setName(prev => ({ ...prev, course: keyword }));
 		setDropdown({ course: keyword.length > 0, professor: false });
+
+		if (keyword.length === 0) {
+			setDropdown({ course: false, professor: false });
+		}
 	}, []);
 
 	const onChangeProfessor = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-		setName(prev => ({ ...prev, professor: event.target.value }));
+		const keyword = event.target.value;
+		setName(prev => ({ ...prev, professor: keyword }));
 		setDropdown({ course: false, professor: true });
+
+		if (keyword.length === 0) {
+			setDropdown({ course: false, professor: false });
+		}
 	}, []);
 
 	const onClickCheckbox = () => {
@@ -119,14 +129,28 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 					/>
 					{dropdown.course && (
 						<section className='dropdown'>
-							{isFetchingCourse ? (
-								<article>검색중입니다...</article>
-							) : (
-								dataCourse?.map((keyword: Keyword) => (
+							{isPendingCourse ? (
+								<TextBox message='검색중입니다...' />
+							) : dataCourse && dataCourse.length > 0 ? (
+								dataCourse.map((keyword: Keyword) => (
 									<span key={keyword.id} onClick={onClickCourse} className='option'>
 										{keyword.name}
 									</span>
 								))
+							) : (
+								<section className='no-result'>
+									<TextBox message='검색 결과가 없습니다.' />
+									<span className='body1-medium'>해당 수업을 새로 추가할까요?</span>
+									<section className='container-btn'>
+										<span
+											className='btn-create txt2'
+											onClick={() => setDropdown({ course: false, professor: false })}
+										>
+											추가하기
+										</span>
+										<span className='body1-medium'>{keywordProfessor}</span>
+									</section>
+								</section>
 							)}
 						</section>
 					)}
@@ -143,14 +167,28 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 					/>
 					{dropdown.professor && (
 						<section className='dropdown'>
-							{isFetchingProfessor ? (
-								<article>검색중입니다...</article>
-							) : (
-								dataProfessor?.map((keyword: Keyword) => (
+							{isPendingProfessor ? (
+								<TextBox message='검색중입니다...' />
+							) : dataProfessor && dataProfessor.length > 0 ? (
+								dataProfessor.map((keyword: Keyword) => (
 									<span key={keyword.id} onClick={onClickProfessor} className='option'>
 										{keyword.name}
 									</span>
 								))
+							) : (
+								<section className='no-result'>
+									<TextBox message='검색 결과가 없습니다.' />
+									<span className='body1-medium'>해당 교수님을 새로 추가할까요?</span>
+									<section className='container-btn'>
+										<span
+											className='btn-create txt2'
+											onClick={() => setDropdown({ course: false, professor: false })}
+										>
+											추가하기
+										</span>
+										<span className='body1-medium'>{keywordProfessor}</span>
+									</section>
+								</section>
 							)}
 						</section>
 					)}
@@ -160,4 +198,4 @@ const ContainerCourse = ({ course, professor }: ContainerCourseProps) => {
 	);
 };
 
-export default ContainerCourse;
+export default React.memo(ContainerCourse);
