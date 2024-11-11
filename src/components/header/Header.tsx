@@ -80,13 +80,8 @@ const Header = () => {
 	useOutsideClick(dropdownRef, openDrop, setOpenDrop);
 
 	useEffect(() => {
-		if (
-			location.pathname === `/recruitment/postings/${id}` ||
-			location.pathname === '/recruitment'
-		) {
+		if (location.pathname === '/recruitment') {
 			setIsHere({ recruit: true, mySchool: false, inform: false });
-		} else if (location.pathname === '/') {
-			setIsHere({ recruit: false, mySchool: true, inform: false });
 		} else {
 			setIsHere({ recruit: false, mySchool: false, inform: false });
 		}

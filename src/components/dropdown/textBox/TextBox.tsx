@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { type PropsWithChildren } from 'react';
 
 interface TextBox {
 	message: string;
-	children?: React.ReactNode;
 }
 
-const TextBox = ({ message, children }: TextBox) => {
+const TextBox = ({ message, children }: PropsWithChildren<TextBox>) => {
 	return (
 		<article>
 			<span>{message}</span>
