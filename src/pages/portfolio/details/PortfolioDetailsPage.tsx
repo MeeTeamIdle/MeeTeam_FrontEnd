@@ -11,7 +11,7 @@ import {
 	ModalPortal,
 } from '../../../components';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useReadPortfolio, useDeletePortfolio } from '../../../hooks';
+import { useReadPortfolio, useDeletePortfolio, useResponsiveWeb } from '../../../hooks';
 import { Image, BlobFile } from '../../../types';
 import { addClassToEmptyPTags, fixModalBackground, unzipFile } from '../../../utils';
 import { useRecoilState } from 'recoil';
@@ -109,17 +109,23 @@ const PortfolioDetailsPage = () => {
 		},
 	};
 
+	// 반응형
+	const [isMobilePort, isTabletPort] = useResponsiveWeb();
+
 	return (
 		isSuccess && (
 			<S.PortfolioDetailsLayout>
 				<S.PortfolioDetailsContainer>
-					<S.PortfolioDetailsHeader>
+					<S.PortfolioDetailsHeader $isTabletPort={isTabletPort} $isMobilePort={isMobilePort}>
 						<S.PortfolioDetailsColumn $gap='1rem'>
 							<h1>{portfolio?.title}</h1>
 							<h5>{portfolio?.description}</h5>
 						</S.PortfolioDetailsColumn>
 						{portfolio?.isWriter && (
-							<S.PortfolioDetailsButtonContainer>
+							<S.PortfolioDetailsButtonContainer
+								$isTabletPort={isTabletPort}
+								$isMobilePort={isMobilePort}
+							>
 								<IconBtn icon={TrashCan} handleClick={handleDeletePortfoilo} />
 								{modalOpen && (
 									<ModalPortal>
