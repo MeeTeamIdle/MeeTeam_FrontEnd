@@ -26,6 +26,7 @@ import {
 	useReadPortfolio,
 	useReadRoleList,
 	useReadSkillList,
+	useResponsiveWeb,
 	useUpdatePortfolio,
 	useUploadImageFile,
 } from '../../../hooks';
@@ -313,6 +314,9 @@ const PortfolioEditPage = () => {
 		},
 	});
 
+	// 반응형
+	const [isMobilePort, isTabletPort] = useResponsiveWeb();
+
 	if (isSuccessReadPortfolio && portfolioId && !portfolio?.isWriter) {
 		return <NotFound />;
 	}
@@ -337,7 +341,7 @@ const PortfolioEditPage = () => {
 						<S.PortfolioEditArticle>
 							<S.PortfolioEditTitle>슬라이드 이미지</S.PortfolioEditTitle>
 							<S.PortfolioEditColumn $width='clamp(50%, 76.4rem, 100%)' $gap='3.6rem'>
-								<S.PortfolioEditRow>
+								<S.PortfolioEditRow $isTabletPort={isTabletPort} $isMobilePort={isMobilePort}>
 									<S.PortfolioEditLabel $required={true}>{LABEL.image}</S.PortfolioEditLabel>
 									<PrimaryBtn
 										type='button'
