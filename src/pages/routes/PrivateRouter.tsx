@@ -11,6 +11,10 @@ const PrivateRouter = () => {
 		return isLogin ? <Outlet /> : <Navigate to='/' />;
 	}
 
+	if (location.pathname === '/') {
+		return isLogin ? <Outlet /> : <Navigate to='/recruitment' />;
+	}
+
 	return isLogin ? <Outlet /> : <Navigate to='/signin' />;
 };
 
