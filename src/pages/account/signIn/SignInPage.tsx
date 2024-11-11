@@ -22,7 +22,7 @@ const SignInPage = () => {
 
 	const handleNaverSignInSuccess = () => {
 		if (secureLocalStorage.getItem('ACCESS_TOKEN_KEY')) {
-			return navigate('/');
+			return navigate('/campus');
 		}
 		return navigate('/signup/school');
 	};

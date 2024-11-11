@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	Dropdown,
-	RecruitCard,
 	Pagination,
 	NeedLogin,
 	ModalPortal,
@@ -14,6 +13,7 @@ import {
 	ClearConditions,
 	SearchBar,
 	FieldPopup,
+	RecruitCard,
 } from '../../../components';
 import S from './RecruitPage.styled';
 import { FilledBookmark } from '../../../assets';
@@ -24,22 +24,45 @@ import {
 	pageState,
 	previousLocationState,
 	recruitFilterState,
+	recruitFilterStateAuth,
 	signupModalState,
 } from '../../../atom';
-import { getPostList } from '../../../service/recruit/board';
-import { useQuery } from '@tanstack/react-query';
-import { useFixModalBackground, useFocusToTop, useLogin, useOutsideClick } from '../../../hooks';
+import {
+	useCheckDevice,
+	useFixModalBackground,
+	useFocusToTop,
+	useLogin,
+	useOutsideClick,
+} from '../../../hooks';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { getAuthPostList, getPostList } from '../../../service/recruit/board';
+import { useQuery } from '@tanstack/react-query';
+
+const commonInitialFilterState = {
+	category: null,
+	field: null,
+	skill: [],
+	role: [],
+	tag: [],
+	keyword: '',
+	course: null,
+	professor: null,
+};
 
 const RecruitPage = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { isLogin } = useLogin();
 	const fieldRef = useRef<HTMLDivElement | null>(null);
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
-	const [searchKeyword, setSearchKeyword] = useState('');
+	const { isLogin } = useLogin();
+	const { isMobile } = useCheckDevice();
+
+	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [searchKeyword, setSearchKeyword] = useState<string>('');
+	const [isFieldOpen, setIsFieldOpen] = useState<boolean>(false);
 	const [isDetailSelected, setIsDetailSelected] = useState(false);
 	const [isFloatingOpen, setIsFloatingOpen] = useState<boolean>(false);
+	const [placeholderText, setPlaceholderText] = useState('제목을 검색해보세요.');
 	const [fieldValue, setFieldValue] = useState({
 		applied: false,
 		value: {
@@ -47,27 +70,34 @@ const RecruitPage = () => {
 			value: '분야를 선택해주세요',
 		},
 	});
-	const [isFocused, setIsFocused] = useState(false);
-	const [placeholderText, setPlaceholderText] = useState('제목을 검색해보세요.');
-	const [page, setPage] = useRecoilState<number>(pageState);
-	const [isOpen, setIsOpen] = useState<boolean>(false);
-	const [isFieldOpen, setIsFieldOpen] = useState<boolean>(false);
-	const [filterState, setFilterState] = useRecoilState(recruitFilterState);
-	const setDetailedFilterState = useSetRecoilState(detailedFilterState);
-	const setPreviousLocationState = useSetRecoilState(previousLocationState);
 	const [isOpenDetail, setIsOpenDetail] = useState({
 		skill: true,
 		role: false,
 		tag: false,
 		message: '기술',
 	});
-	const [searchParams, setSearchParams] = useSearchParams();
+
+	const [page, setPage] = useRecoilState<number>(pageState);
+	const [filterState, setFilterState] = useRecoilState(recruitFilterState);
+	const [filterStateAuth, setFilterStateAuth] = useRecoilState(recruitFilterStateAuth);
+	const setDetailedFilterState = useSetRecoilState(detailedFilterState);
+	const setPreviousLocationState = useSetRecoilState(previousLocationState);
 	const [needLoginModal, setNeedLoginModal] = useRecoilState(needLoginModalState);
 	const [signupModalOpen, setSignupModalOpen] = useRecoilState(signupModalState);
+	const [searchParams, setSearchParams] = useSearchParams();
 
-	const { data, isLoading } = useQuery({
-		queryKey: ['recruit_board', { filterState, isLogin, page }],
-		queryFn: () => getPostList({ filterState, isLogin, page }),
+	const { data: posts } = useQuery({
+		queryKey: [
+			location.pathname,
+			{ filterState: location.pathname === '/' ? filterState : filterStateAuth, page },
+		],
+		queryFn: async () => {
+			if (location.pathname === '/') {
+				return await getPostList({ filterState, page });
+			} else if (location.pathname === '/campus') {
+				return await getAuthPostList({ filterState: filterStateAuth, page });
+			}
+		},
 	});
 
 	const onClickDetailed = (event: React.MouseEvent) => {
@@ -91,24 +121,24 @@ const RecruitPage = () => {
 		setSearchParams(searchParams);
 	};
 
-	const onClickClear = () => {
-		setFilterState({
-			scope: null,
-			category: null,
-			field: null,
-			skill: [],
-			role: [],
-			tag: [],
-			keyword: '',
-			course: null,
-			professor: null,
-		});
+	const onClickClear = useCallback(() => {
+		if (location.pathname === '/') {
+			setFilterState({
+				scope: 1,
+				...commonInitialFilterState,
+			});
+		} else if (location.pathname === '/campus') {
+			setFilterStateAuth({
+				scope: 2,
+				...commonInitialFilterState,
+			});
+		}
+
 		setSearchKeyword('');
 		setDetailedFilterState({ skill: [], role: [], tag: [] });
 		setSearchParams(searchParams);
 		setIsOpenDetail({ skill: true, role: false, tag: false, message: '기술' });
 
-		searchParams.delete('scope');
 		searchParams.delete('category');
 		searchParams.delete('skill');
 		searchParams.delete('role');
@@ -118,7 +148,14 @@ const RecruitPage = () => {
 		searchParams.delete('professor');
 		setIsDetailSelected(false);
 		setSearchParams(searchParams);
-	};
+	}, [
+		location.pathname,
+		searchParams,
+		setSearchParams,
+		setDetailedFilterState,
+		setFilterState,
+		setFilterStateAuth,
+	]);
 
 	const closeHandler = () => {
 		setIsOpen(false);
@@ -223,12 +260,10 @@ const RecruitPage = () => {
 	};
 
 	const handleFocusedPlaceholder = () => {
-		setIsFocused(true);
 		setPlaceholderText('검색어 입력');
 	};
 
 	const handleBlurredPlaceholder = () => {
-		setIsFocused(true);
 		setPlaceholderText('제목을 검색해보세요.');
 	};
 
@@ -263,7 +298,7 @@ const RecruitPage = () => {
 
 	useEffect(() => {
 		setPreviousLocationState(location.pathname + location.search);
-	}, [location]);
+	}, [location, setPreviousLocationState]);
 
 	useEffect(() => {
 		if (
@@ -278,32 +313,45 @@ const RecruitPage = () => {
 	}, [filterState.role, filterState.skill, filterState.tag]);
 
 	useEffect(() => {
-		const isScope = searchParams.get('scope');
-		const isCategory = searchParams.get('category');
-		const isSkill = searchParams.getAll('skill').map(Number);
-		const isRole = searchParams.getAll('role').map(Number);
-		const isTag = searchParams.getAll('tag').map(Number);
-		const isKeyword = searchParams.get('keyword');
-		const isField = searchParams.get('field');
-		const isCourse = searchParams.get('course');
-		const isProfessor = searchParams.get('professor');
+		const queryParams = {
+			category: searchParams.get('category'),
+			skill: searchParams.getAll('skill').map(Number),
+			role: searchParams.getAll('role').map(Number),
+			tag: searchParams.getAll('tag').map(Number),
+			keyword: searchParams.get('keyword'),
+			field: searchParams.get('field'),
+			course: searchParams.get('course'),
+			professor: searchParams.get('professor'),
+		};
 
-		setFilterState({
-			scope: isScope ? Number(isScope) : null,
-			category: isCategory ? Number(isCategory) : null,
-			skill: isSkill ? isSkill : [],
-			role: isRole ? isRole : [],
-			tag: isTag ? isTag : [],
-			keyword: isKeyword ? isKeyword : '',
-			field: isField ? Number(isField) : null,
-			course: isCourse ? Number(isCourse) : null,
-			professor: isProfessor ? Number(isProfessor) : null,
-		});
-	}, []);
+		if (location.pathname === '/') {
+			setFilterState({
+				scope: 1,
+				category: queryParams.category ? Number(queryParams.category) : null,
+				skill: queryParams.skill ? queryParams.skill : [],
+				role: queryParams.role ? queryParams.role : [],
+				tag: queryParams.tag ? queryParams.tag : [],
+				keyword: queryParams.keyword ? queryParams.keyword : '',
+				field: queryParams.field ? Number(queryParams.field) : null,
+				course: queryParams.course ? Number(queryParams.course) : null,
+				professor: queryParams.professor ? Number(queryParams.professor) : null,
+			});
+		} else if (location.pathname === '/campus') {
+			setFilterStateAuth({
+				scope: 2,
+				category: queryParams.category ? Number(queryParams.category) : null,
+				skill: queryParams.skill ? queryParams.skill : [],
+				role: queryParams.role ? queryParams.role : [],
+				tag: queryParams.tag ? queryParams.tag : [],
+				keyword: queryParams.keyword ? queryParams.keyword : '',
+				field: queryParams.field ? Number(queryParams.field) : null,
+				course: queryParams.course ? Number(queryParams.course) : null,
+				professor: queryParams.professor ? Number(queryParams.professor) : null,
+			});
+		}
 
-	useEffect(() => {
-		setSearchKeyword(filterState.keyword as string);
-	}, [filterState.keyword]);
+		setSearchKeyword(queryParams.keyword || '');
+	}, [searchParams, setFilterState, setFilterStateAuth, location.pathname]);
 
 	return (
 		<>
@@ -322,24 +370,23 @@ const RecruitPage = () => {
 					/>
 					<section className='wrapper-filters'>
 						<section className='container-filters'>
-							{isLogin && (
-								<Dropdown data={['모든 범위', '교내', '교외']} initialData='범위' scope />
-							)}
 							<Dropdown
 								data={['모든 유형', '프로젝트', '스터디', '공모전']}
 								initialData='유형'
 								category
 							/>
-							<DropdownDetail
-								isOpen={isOpen}
-								dropdownRef={dropdownRef}
-								isOpenDetail={isOpenDetail}
-								isDetailSelected={isDetailSelected}
-								onClick={onClickDetailed}
-								handleClose={closeHandler}
-								handleChildDropdown={handlerChildDropdown}
-								handleClickDetails={onClickDetails}
-							/>
+							{!isMobile && (
+								<DropdownDetail
+									isOpen={isOpen}
+									dropdownRef={dropdownRef}
+									isOpenDetail={isOpenDetail}
+									isDetailSelected={isDetailSelected}
+									onClick={onClickDetailed}
+									handleClose={closeHandler}
+									handleChildDropdown={handlerChildDropdown}
+									handleClickDetails={onClickDetails}
+								/>
+							)}
 							<ClearConditions onClick={onClickClear} />
 						</section>
 						<SearchBar
@@ -361,18 +408,14 @@ const RecruitPage = () => {
 								<img src={FilledBookmark} alt='bookmark-icon' />
 								<span className='body2'>북마크 모아보기 {'❯'}</span>
 							</article>
-							{isLoading ? (
-								<section></section>
-							) : (
-								data && (
-									<section className='container-contents__grid'>
-										{data.posts.map(post => (
-											<RecruitCard {...post} key={post.id} />
-										))}
-									</section>
-								)
+							{posts && (
+								<section className='container-contents__grid'>
+									{posts.posts.map(post => (
+										<RecruitCard {...post} key={post.id} />
+									))}
+								</section>
 							)}
-							{data && data.posts.length === 0 && (
+							{posts && posts.posts.length === 0 && (
 								<section className='no-results'>
 									<span>일치하는 결과가 없습니다.</span>
 								</section>
@@ -381,10 +424,10 @@ const RecruitPage = () => {
 					</article>
 				</section>
 				<article className='container-pagination'>
-					{data && (
+					{posts && (
 						<Pagination
-							postsNum={data.pageInfo.totalContents}
-							postsPerPage={data.pageInfo.size}
+							postsNum={posts.pageInfo.totalContents}
+							postsPerPage={posts.pageInfo.size}
 							currentPage={page}
 							setCurrentPage={setPage}
 						/>

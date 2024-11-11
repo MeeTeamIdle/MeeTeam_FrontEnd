@@ -1,44 +1,56 @@
-import React from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import {
-	RecruitPage,
-	GalaryPage,
-	RecruitCreatePage,
-	RecruitDetailPage,
-	SignInPage,
-	SchoolCertificationPage,
-	NicknameSettingPage,
-	PassWordFindingPage,
-	ProfileDetailsPage,
-	ProfileEditPage,
-	PortfolioDetailsPage,
-	PortfolioEditPage,
-	ApplierManagePage,
-	RecruitManageWrapper,
-	RecruitPostingBookmark,
-	RecruitPostingApply,
-	RecruitMyPostings,
-	CompleteSignUpPage,
-	PrivateRouter,
-	PortfolioManagementPage,
-	NotFound,
-	AccountSetting,
-} from './pages/index.ts';
+import { RecruitPage, SignInPage } from './pages/index.ts';
 import './globalStyle.css';
-import { getPostList } from './service/recruit/board.ts';
-import { FilterData } from './types/index.ts';
 
-const filterState: FilterData = {
-	field: null,
-	scope: null,
-	category: null,
-	keyword: null,
-	skill: undefined,
-	role: undefined,
-	tag: undefined,
-};
+import { LoadingBackground } from './components/index.ts';
+
+const RecruitCreatePage = React.lazy(
+	() => import('./pages/recruit/recruitCreatePage/RecruitCreatePage')
+);
+const RecruitDetailPage = React.lazy(
+	() => import('./pages/recruit/recruitDetailPage/RecruitDetailPage')
+);
+const ApplierManagePage = React.lazy(
+	() => import('./pages/recruit/applierManagePage/ApplierManagePage')
+);
+const SchoolCertificationPage = React.lazy(
+	() => import('./pages/account/schoolCertification/SchoolCertificationPage')
+);
+const NicknameSettingPage = React.lazy(
+	() => import('./pages/account/nicknameSetting/NicknameSettingPage')
+);
+const PassWordFindingPage = React.lazy(
+	() => import('./pages/account/passWordFindingPage/PassWordFindingPage')
+);
+const CompleteSignUpPage = React.lazy(() => import('./pages/account/complete/CompleteSignUpPage'));
+const ProfileDetailsPage = React.lazy(() => import('./pages/profile/details/ProfileDetailsPage'));
+const ProfileEditPage = React.lazy(() => import('./pages/profile/edit/ProfileEditPage'));
+const NotFound = React.lazy(() => import('./pages/notFound/NotFound'));
+const AccountSetting = React.lazy(() => import('./pages/account/accountSetting/AccountSetting'));
+const PrivateRouter = React.lazy(() => import('./pages/routes/PrivateRouter'));
+const RecruitManageWrapper = React.lazy(
+	() => import('./pages/recruit/recruitManagePage/RecruitManageWrapper')
+);
+const RecruitPostingBookmark = React.lazy(
+	() => import('./pages/recruit/recruitManagePage/RecruitPostingBookmark')
+);
+const RecruitPostingApply = React.lazy(
+	() => import('./pages/recruit/recruitManagePage/RecruitPostingApply')
+);
+const RecruitMyPostings = React.lazy(
+	() => import('./pages/recruit/recruitManagePage/RecruitMyPostings')
+);
+const PortfolioDetailsPage = React.lazy(
+	() => import('./pages/portfolio/details/PortfolioDetailsPage')
+);
+const PortfolioEditPage = React.lazy(() => import('./pages/portfolio/edit/PortfolioEditPage'));
+const PortfolioManagementPage = React.lazy(
+	() => import('./pages/portfolio/management/PortfolioManagementPage')
+);
 
 const router = createBrowserRouter([
 	{
@@ -48,9 +60,20 @@ const router = createBrowserRouter([
 			{
 				path: '',
 				element: <RecruitPage />,
-				loader: () => {
-					return getPostList({ filterState: filterState, page: 1 });
-				},
+			},
+			{
+				path: 'campus',
+				element: <PrivateRouter />,
+				children: [
+					{
+						path: '',
+						element: <RecruitPage />,
+					},
+					{
+						path: 'recruitment/postings/:id',
+						element: <RecruitDetailPage />,
+					},
+				],
 			},
 			{
 				path: 'recruitment/postings/:id',
@@ -60,10 +83,6 @@ const router = createBrowserRouter([
 				path: 'recruitment/applicants/:id',
 				element: <PrivateRouter />,
 				children: [{ path: '', element: <ApplierManagePage /> }],
-			},
-			{
-				path: 'galary',
-				element: <GalaryPage />,
 			},
 			{
 				path: 'signin',
@@ -166,6 +185,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<RouterProvider router={router} />
+		<Suspense fallback={<LoadingBackground />}>
+			<RouterProvider router={router} />
+		</Suspense>
 	</React.StrictMode>
 );

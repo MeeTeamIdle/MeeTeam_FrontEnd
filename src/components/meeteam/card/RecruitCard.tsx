@@ -45,7 +45,11 @@ const RecruitCard = ({
 	}/${extractDeadline.getDate()}`;
 
 	const onClickContent = () => {
-		navigate(`/recruitment/postings/${id}`);
+		if (location.pathname === '/campus') {
+			navigate(`/campus/recruitment/postings/${id}`);
+		} else {
+			navigate(`/recruitment/postings/${id}`);
+		}
 	};
 
 	const onClickBookmark = (event: React.MouseEvent<HTMLDivElement>) => {

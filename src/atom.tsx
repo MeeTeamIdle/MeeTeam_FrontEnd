@@ -209,7 +209,22 @@ export const previousLocationState = atom({
 export const recruitFilterState = atom<RecruitFilter>({
 	key: 'recruitFilter',
 	default: {
-		scope: null,
+		scope: 1,
+		category: null,
+		field: null,
+		skill: [],
+		role: [],
+		tag: [],
+		keyword: '',
+		course: null,
+		professor: null,
+	},
+});
+
+export const recruitFilterStateAuth = atom<RecruitFilter>({
+	key: 'recruitFilterAuth',
+	default: {
+		scope: 2,
 		category: null,
 		field: null,
 		skill: [],

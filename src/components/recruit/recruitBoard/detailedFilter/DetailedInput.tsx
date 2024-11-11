@@ -7,6 +7,7 @@ import { Keyword, DetailedInfo } from '../../../../types';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { detailedFilterState, recruitFilterState } from '../../../../atom';
 import { useSearchParams } from 'react-router-dom';
+import { TextBox } from '../../../index';
 
 const MESSAGE = {
 	SKILL: {
@@ -36,25 +37,32 @@ const DetailedInput = ({ type, closeHandler }: DetailedInfo) => {
 	const keyword = useDebounce(tagItem);
 	const setFilterState = useSetRecoilState(recruitFilterState);
 
-	const { data: dataRole, isLoading: isLoadingRole } = useQuery({
+	const { data: dataRole, isPending: isPendingRole } = useQuery({
 		queryKey: ['searchRole', keyword],
 		queryFn: () => getRoleKeyword(keyword),
 		enabled: !!tagItem && type === '역할',
+		staleTime: Infinity,
 	});
 
-	const { data: dataSkill, isLoading: isLoadingSkill } = useQuery({
+	const { data: dataSkill, isPending: isPendingSkill } = useQuery({
 		queryKey: ['searchSkill', keyword],
 		queryFn: () => getSkillKeyword(keyword),
 		enabled: !!tagItem && type === '기술',
+		staleTime: Infinity,
 	});
 
-	const { data: dataTag, isLoading: isLoadingTag } = useQuery({
+	const { data: dataTag, isPending: isPendingTag } = useQuery({
 		queryKey: ['searchTag', keyword],
 		queryFn: () => getTagKeyword(keyword),
 		enabled: !!tagItem && type === '태그',
 	});
 
 	const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (event.target.value.length > 0) {
+			setIsOpenMenu(true);
+		} else {
+			setIsOpenMenu(false);
+		}
 		setTagItem(event.target.value);
 	};
 
@@ -129,7 +137,6 @@ const DetailedInput = ({ type, closeHandler }: DetailedInfo) => {
 
 	const onClickSearchBar = (event: React.MouseEvent<HTMLInputElement>) => {
 		event.stopPropagation();
-		setIsOpenMenu(prev => !prev);
 	};
 
 	const onClickErase = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -193,25 +200,42 @@ const DetailedInput = ({ type, closeHandler }: DetailedInfo) => {
 				<section className='role-menu'>
 					<ul>
 						{type === '기술' &&
-							!isLoadingSkill &&
-							dataSkill?.map((item: Keyword) => (
-								<li className='body1' key={item.id} onClick={event => onClickItem(event, item)}>
-									{item.name}
-								</li>
+							(isPendingSkill ? (
+								<TextBox message='검색 중...' />
+							) : dataSkill && dataSkill.length > 0 ? (
+								dataSkill.map((item: Keyword) => (
+									<li className='body1' key={item.id} onClick={event => onClickItem(event, item)}>
+										{item.name}
+									</li>
+								))
+							) : (
+								<TextBox message='검색 결과가 없습니다.' />
 							))}
+
 						{type === '역할' &&
-							!isLoadingRole &&
-							dataRole?.map((item: Keyword) => (
-								<li className='body1' key={item.id} onClick={event => onClickItem(event, item)}>
-									{item.name}
-								</li>
+							(isPendingRole ? (
+								<TextBox message='검색중입니다...' />
+							) : dataRole && dataRole.length > 0 ? (
+								dataRole.map((item: Keyword) => (
+									<li className='body1' key={item.id} onClick={event => onClickItem(event, item)}>
+										{item.name}
+									</li>
+								))
+							) : (
+								<TextBox message='검색 결과가 없습니다.' />
 							))}
+
 						{type === '태그' &&
-							!isLoadingTag &&
-							dataTag?.map((item: Keyword) => (
-								<li className='body1' key={item.id} onClick={event => onClickItem(event, item)}>
-									{item.name}
-								</li>
+							(isPendingTag ? (
+								<TextBox message='검색중입니다...' />
+							) : dataTag && dataTag.length > 0 ? (
+								dataTag.map((item: Keyword) => (
+									<li className='body1' key={item.id} onClick={event => onClickItem(event, item)}>
+										{item.name}
+									</li>
+								))
+							) : (
+								<TextBox message='검색 결과가 없습니다.' />
 							))}
 					</ul>
 				</section>
@@ -258,4 +282,4 @@ const DetailedInput = ({ type, closeHandler }: DetailedInfo) => {
 	);
 };
 
-export default DetailedInput;
+export default React.memo(DetailedInput);

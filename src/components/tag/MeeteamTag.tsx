@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import S from './MeeteamTag.styled';
 import { useRecoilState } from 'recoil';
 import { recruitInputState } from '../../atom';
@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getTagKeyword } from '../../service';
 import { Search, XBtn } from '../../assets';
 import { Keyword, RecruitTags } from '../../types';
+import { TextBox } from '../index';
 
 interface RecruitTagListProps {
 	tags: RecruitTags[] | undefined;
@@ -20,20 +21,14 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
 	const keywordTag = useDebounce(tagItem, 500);
 
-	const { data, isSuccess, isFetching } = useQuery({
+	const { data, isSuccess, isPending } = useQuery({
 		queryKey: ['keywordTag', keywordTag],
 		queryFn: () => getTagKeyword(keywordTag),
-		staleTime: Infinity,
-		gcTime: Infinity,
 		enabled: !!tagItem,
 	});
 
 	const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		const target = event.currentTarget;
-
-		if (target.value.length > 0) {
-			setIsDropdownVisible(true);
-		}
 
 		if (target.value.length !== 0 && event.key === 'Enter') {
 			event.preventDefault();
@@ -43,6 +38,17 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 			event.preventDefault();
 		}
 	};
+
+	const onChangeTagItem = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+		const { value } = event.target;
+		setTagItem(value);
+
+		if (value.length === 0) {
+			setIsDropdownVisible(false);
+		} else {
+			setIsDropdownVisible(true);
+		}
+	}, []);
 
 	const submitTagItem = () => {
 		setTagList(prev => {
@@ -107,43 +113,44 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 					placeholder={'태그는 최대 5개까지 가능합니다.'}
 					tabIndex={2}
 					disabled={tagList.length < 20 ? false : true}
-					onChange={event => setTagItem(event.target.value)}
+					onChange={onChangeTagItem}
 					value={tagItem}
 					onKeyPress={onKeyPress}
 					className='tag-input body1-medium'
 				/>
 				<img src={Search} className='icon-search' alt='검색 아이콘' />
 				{isDropdownVisible && (
-					<div className='tag-dropdown'>
-						{isSuccess &&
-							data?.map((tag: Keyword) => (
-								<span
-									className='body1-medium option'
-									key={tag.id}
-									onClick={event => onClickTagOptions(tag.name, event)}
-								>
-									{tag.name}
-								</span>
-							))}
-						{isSuccess && data?.length === 0 && (
-							<section className='no-result'>
-								<span className='body1-medium'>검색 결과가 없습니다.</span>
-								<span className='body1-medium'>해당 태그를 새로 생성할까요?</span>
-								<section className='container-btn'>
-									<span
-										className='btn-create txt2'
-										onClick={event => onClickTagOptions(tagItem, event)}
-									>
-										생성하기
-									</span>
-									<span className='body1-medium'>{tagItem}</span>
-								</section>
-							</section>
-						)}
-						{isFetching && keywordTag.length === 0 && (
-							<section className='no-result'>
-								<span className='body1-medium'>태그를 입력해주세요.</span>
-							</section>
+					<div className='tag-dropdown body1-medium'>
+						{isPending ? (
+							<TextBox message='검색중입니다...' />
+						) : (
+							<>
+								{data && data.length > 0
+									? data.map((tag: Keyword) => (
+											<span
+												className='body1-medium option'
+												key={tag.id}
+												onClick={event => onClickTagOptions(tag.name, event)}
+											>
+												{tag.name}
+											</span>
+										))
+									: isSuccess && (
+											<section className='no-result'>
+												<span className='body1-medium'>검색 결과가 없습니다.</span>
+												<span className='body1-medium'>해당 태그를 새로 생성할까요?</span>
+												<section className='container-btn'>
+													<span
+														className='btn-create txt2'
+														onClick={event => onClickTagOptions(tagItem, event)}
+													>
+														생성하기
+													</span>
+													<span className='body1-medium'>{tagItem}</span>
+												</section>
+											</section>
+										)}
+							</>
 						)}
 					</div>
 				)}
@@ -164,4 +171,4 @@ const MeeteamTag = ({ tags }: RecruitTagListProps) => {
 	);
 };
 
-export default MeeteamTag;
+export default React.memo(MeeteamTag);

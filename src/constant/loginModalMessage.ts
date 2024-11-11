@@ -25,4 +25,8 @@ export const NEEDLOGINTYPE: {
 		TITLE: '북마크만 모아보세요!',
 		MESSAGE: '북마크한 구인글을 확인해보세요! ',
 	},
+	SCHOOL_RECRUIT: {
+		TITLE: '우리 학교는 어떤 팀이 있나요?',
+		MESSAGE: '학교 구인글을 확인해보세요!',
+	},
 };

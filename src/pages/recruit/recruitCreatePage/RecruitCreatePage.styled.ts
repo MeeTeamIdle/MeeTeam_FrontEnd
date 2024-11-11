@@ -137,6 +137,12 @@ const RecruitCreatePage = styled.div`
 			background: #5877fc;
 			color: #fff;
 		}
+
+		.post-disabled {
+			background: #e3e3e3;
+			color: #a3a3a3;
+			cursor: not-allowed;
+		}
 	}
 
 	.modal-background {

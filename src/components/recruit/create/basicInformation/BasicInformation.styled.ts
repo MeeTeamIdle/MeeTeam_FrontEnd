@@ -339,6 +339,36 @@ const ContainerCourse = styled.article<Course>`
 						transition: 0.2s ease-in-out;
 					}
 				}
+
+				.no-result {
+					display: flex;
+					width: 100%;
+					height: 16.7rem;
+					padding: 1.2rem 1.6rem;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+					gap: 0.8rem;
+
+					.container-btn {
+						margin-top: 2rem;
+						display: flex;
+						align-items: center;
+						gap: 0.8rem;
+					}
+
+					.btn-create {
+						display: flex;
+						padding: 0.6rem 0.8rem;
+						justify-content: center;
+						align-items: center;
+						gap: 0.75rem;
+						border-radius: 1.5rem;
+						border: 1px solid #e0e6ff;
+						background: #fff;
+						cursor: pointer;
+					}
+				}
 			}
 		}
 	}

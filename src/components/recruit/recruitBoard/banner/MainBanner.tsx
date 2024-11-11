@@ -11,7 +11,7 @@ const MainBanner = () => {
 			<section>
 				<img
 					src='meeteam_banner_icon_large.webp'
-					srcSet='meeteam_banner_icon_small.webp 600w,  meeteam_banner_icon_medium.webp 900w, meeteam_banner_icon_large.webp 1280w'
+					srcSet='meeteam_banner_icon_small.webp 600w,  meeteam_banner_icon_medium.webp 900w, meeteam_banner_icon_large.webp 1980w'
 					alt='main-banner-image'
 					sizes='(max-width:600px) 70rem, (max-width: 900px) 90rem, 120rem'
 					fetchpriority='high'
