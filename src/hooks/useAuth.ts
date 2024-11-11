@@ -99,7 +99,6 @@ export const useCheckDuplicateNickname = (authKeys: string[], isEnabled: boolean
 		queryKey: authKeys,
 		queryFn: isEnabled => isEnabled && checkDuplicateNickname(authKeys[1]),
 		enabled: isEnabled,
-		staleTime: 1000,
 	});
 };
 
