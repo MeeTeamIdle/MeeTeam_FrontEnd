@@ -417,7 +417,7 @@ const PortfolioEditPage = () => {
 															differenceInDays(
 																new Date(watch('endDate') as string),
 																new Date(startDate)
-															) >= 0 || '시작일을 종료일 이전으로 설정해주세요'
+															) >= 0 || '종료일 이전으로 설정해주세요'
 														);
 													}
 												},
@@ -435,7 +435,7 @@ const PortfolioEditPage = () => {
 															differenceInDays(
 																new Date(endDate),
 																new Date(watch('startDate') as string)
-															) >= 0 || '종료일을 시작일 이후로 설정해주세요'
+															) >= 0 || '시작일 이후로 설정해주세요'
 														);
 													}
 												},
