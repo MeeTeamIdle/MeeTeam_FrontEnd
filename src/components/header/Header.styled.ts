@@ -212,7 +212,10 @@ const Header = styled.header<{ $isLogin?: boolean }>`
 		}
 
 		.header__navigation {
-			display: none;
+			display: flex;
+			align-items: center;
+			font-size: 1.2rem;
+			margin-bottom: 1rem;
 		}
 
 		.header__menu {
