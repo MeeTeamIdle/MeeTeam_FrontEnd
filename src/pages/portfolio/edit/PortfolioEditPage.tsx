@@ -58,7 +58,7 @@ const LABEL = {
 	image: `최소 한 장 이상의 이미지가 업로드 되어야하며 첫 번째 이미지가 메인 이미지가 됩니다.\n단, 한 장당 30MB 이하로 최대 15장까지 업로드 가능합니다.`,
 	content: `진행 했던 내용을 자유롭게 작성해주세요.`,
 };
-const PROCEED_TYPE = ['오프라인', '온라인', '상관없음'];
+const PROCEED_TYPE = ['오프라인', '온라인', '온/오프라인'];
 
 const PortfolioEditPage = () => {
 	const { portfolioId } = useParams() as { portfolioId: string }; // undefined 인 경우(생성하는 경우) 로직 필요
