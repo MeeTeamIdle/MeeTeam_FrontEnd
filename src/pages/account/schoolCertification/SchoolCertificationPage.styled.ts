@@ -1,7 +1,14 @@
 import styled from 'styled-components';
 import Account from '../Account.styled';
+import { ResponsiveProps } from '../../../types';
 
-const SchoolCertificationLayout = styled(Account.AccountLayout)``;
+const SchoolCertificationLayout = styled(Account.AccountLayout)<ResponsiveProps>`
+	${props =>
+		props.$isMobile &&
+		`
+			white-space: pre-wrap;
+		`}
+`;
 
 const SchoolCertificationPageForm = styled(Account.AccountForm)<{ $submitEmail?: boolean }>`
 	align-items: center;

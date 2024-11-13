@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { ResponsiveProps } from '../../../types';
 
-interface PortfolioBoxStyle {
+interface PortfolioBoxStyle extends ResponsiveProps {
 	$gap?: string;
 	$width?: string;
 }
@@ -39,6 +40,12 @@ const PortfolioInformationRow = styled.div<PortfolioBoxStyle>`
 	/* 반응형 대비 */
 	flex-wrap: wrap;
 	row-gap: ${props => props.$gap};
+
+	${props =>
+		props.$isMobile &&
+		`flex-direction: column;
+			row-gap: 0.8rem;
+		`}
 `;
 
 const PortfolioInformationGrid = styled.div<PortfolioBoxStyle>`

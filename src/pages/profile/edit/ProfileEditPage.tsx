@@ -33,10 +33,12 @@ import {
 	useUploadImageFile,
 	useReadImagePresignedUrl,
 	useCheckDuplicateNickname,
+	useCheckDevice,
 } from '../../../hooks';
 import { useNavigate } from 'react-router-dom';
 import { useReadInfinitePortfolioList } from '../../../hooks/usePortfolio';
 import { fixModalBackground, checkEnterKeyDown } from '../../../utils';
+import { differenceInDays } from 'date-fns';
 
 interface FormValues {
 	nickname?: string;
@@ -387,10 +389,13 @@ const ProfileEditPage = () => {
 		},
 	});
 
+	// 반응형
+	const { isMobile, isTablet } = useCheckDevice();
+
 	return (
 		<>
 			<S.ProfileLayout onSubmit={handleSubmit(submitHandler)} onKeyDown={e => checkEnterKeyDown(e)}>
-				<S.ProfileHeader>
+				<S.ProfileHeader $isTablet={isTablet} $isMobile={isMobile}>
 					<ProfileImage
 						isEditable={true}
 						userId={user?.nickname as string}
@@ -398,7 +403,12 @@ const ProfileEditPage = () => {
 						url={user?.imageUrl}
 					/>
 					<S.ProfileColumn $gap='2.4rem'>
-						<S.ProfileRow $width='clamp(50%, 50.8rem, 100%)' $gap='1rem'>
+						<S.ProfileRow
+							$width='clamp(50%, 50.8rem, 100%)'
+							$gap='1rem'
+							$isTablet={isTablet}
+							$isMobile={isMobile}
+						>
 							<Input
 								// defaultValue={user?.nickname}
 								register={register}
@@ -459,7 +469,9 @@ const ProfileEditPage = () => {
 							<S.ProfileColumn $width='clamp(50%, 51.8rem, 100%)' $gap='1.6rem'>
 								<label style={{ color: 'var(--Form-txtIcon-default,  #8E8E8E)' }}>연락처</label>
 								<S.ProfileRow $gap='1rem'>
-									<Input register={register} formState={formState} {...PROFILE_EDIT_DATA.phone} />
+									<S.ProfileRow $gap='1rem'>
+										<Input register={register} formState={formState} {...PROFILE_EDIT_DATA.phone} />
+									</S.ProfileRow>
 									<Toggle state={isPhonePublic} setState={setIsPhonePublic} />
 								</S.ProfileRow>
 							</S.ProfileColumn>
@@ -563,7 +575,7 @@ const ProfileEditPage = () => {
 						<AddFormBtn title='수상/활동 추가' handleClick={() => addAward()} />
 						<S.ProfileColumn $gap='3.6rem'>
 							{awards?.map((award, index) => (
-								<S.ProfileRow key={award.id} $gap='1rem'>
+								<S.ProfileRow key={award.id} $gap='1rem' $isTablet={isTablet} $isMobile={isMobile}>
 									<S.ProfileColumn $gap='2rem'>
 										<S.ProfileRow $gap='1rem'>
 											<MuiDatepickerController
@@ -571,12 +583,38 @@ const ProfileEditPage = () => {
 												control={control}
 												formState={formState}
 												{...PROFILE_EDIT_DATA.awardStartDate}
+												rules={{
+													required: '시작일을 설정해주세요',
+													validate: (startDate: string) => {
+														if (watch(`awards.${index}.endDate`)) {
+															return (
+																differenceInDays(
+																	new Date(watch(`awards.${index}.endDate`) as string),
+																	new Date(startDate)
+																) >= 0 || '종료일 이전으로 설정해주세요'
+															);
+														}
+													},
+												}}
 											/>
 											<MuiDatepickerController
 												name={`awards.${index}.endDate`}
 												control={control}
 												formState={formState}
 												{...PROFILE_EDIT_DATA.awardEndDate}
+												rules={{
+													required: '종료일을 설정해주세요',
+													validate: (endDate: string) => {
+														if (watch(`awards.${index}.startDate`)) {
+															return (
+																differenceInDays(
+																	new Date(endDate),
+																	new Date(watch(`awards.${index}.startDate`) as string)
+																) >= 0 || '시작일 이후로 설정해주세요'
+															);
+														}
+													},
+												}}
 											/>
 										</S.ProfileRow>
 										<Input

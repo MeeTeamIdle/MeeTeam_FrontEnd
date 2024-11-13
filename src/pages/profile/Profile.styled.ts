@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { ResponsiveProps } from '../../types';
 
-interface ProfileBoxStyle {
+interface ProfileBoxStyle extends ResponsiveProps {
 	$gap?: string;
 	$width?: string;
 }
@@ -79,7 +80,8 @@ const ProfileSmallText = styled.span<{ $color?: string }>`
 	letter-spacing: 0.0024rem;
 `;
 
-const ProfileHeader = styled.header`
+const ProfileHeader = styled.header<ResponsiveProps>`
+	position: relative;
 	display: flex;
 	flex-wrap: wrap;
 	column-gap: 5.6rem;
@@ -95,7 +97,9 @@ const ProfileHeader = styled.header`
 		margin-top: 2rem;
 		margin-bottom: 1.62rem;
 
-		align-items: end;
+		// 닉네임 길이 따른 임시 레이아웃 변경
+		flex-direction: column;
+		row-gap: 1.2rem;
 	}
 
 	h3 {
@@ -105,6 +109,13 @@ const ProfileHeader = styled.header`
 	h4 {
 		margin-bottom: 1.28rem;
 	}
+
+	.profile-header_btn {
+		position: absolute;
+		right: 0;
+		top: 0;
+	}
+	${props => (props.$isTablet || props.$isMobile) && 'flex-direction: column'}
 `;
 
 const ProfileArticle = styled.article`
@@ -123,6 +134,12 @@ const ProfileColumn = styled.div<ProfileBoxStyle>`
 	flex-direction: column;
 	row-gap: ${props => props.$gap};
 	width: ${props => props.$width};
+
+	${props =>
+		(props.$isTablet || props.$isMobile) &&
+		`
+			row-gap: 1.2rem;
+		`}
 `;
 
 const ProfileRow = styled.div<ProfileBoxStyle>`
@@ -135,6 +152,12 @@ const ProfileRow = styled.div<ProfileBoxStyle>`
 	/* 반응형 대비 */
 	flex-wrap: wrap;
 	row-gap: ${props => props.$gap};
+
+	${props =>
+		(props.$isTablet || props.$isMobile) &&
+		`flex-direction: column;
+			row-gap: 2.4rem;
+		`}
 `;
 
 const ProfileGrid = styled.div`

@@ -15,6 +15,7 @@ const PortfolioImageGrid = styled.div`
 
 const PortfolioImageUpload = styled.div<{ $invalid?: boolean }>`
 	position: relative;
+	width: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
