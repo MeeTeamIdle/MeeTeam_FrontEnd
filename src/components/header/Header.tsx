@@ -1,47 +1,24 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import S from './Header.styled';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { DropdownArrow } from '../../assets';
 import { ProfileImage } from '..';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { recruitFilterState, userState, loginState } from '../../atom';
+import { userState, loginState } from '../../atom';
 import { useSignOut, useLogin, useReadProfileImage, useOutsideClick } from '../../hooks';
 
 const Header = () => {
-	const { id } = useParams();
 	const { isLogin } = useLogin();
-	const location = useLocation();
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
 	const navigate = useNavigate();
 
 	const [openDrop, setOpenDrop] = useState<boolean>(false);
-	const [isHere, setIsHere] = useState({
-		recruit: false,
-		mySchool: false,
-		inform: false,
-	});
 	const [userInfo, setUserState] = useRecoilState(userState);
 
-	const setFilterState = useSetRecoilState(recruitFilterState);
 	const setLoginState = useSetRecoilState(loginState);
 
 	const { mutate: signOut } = useSignOut({ setUserState, setLoginState });
 	const { data: profileImage } = useReadProfileImage(isLogin);
-
-	const handleRecruitBoardButtonClick = () => {
-		navigate('/');
-		setFilterState({
-			scope: 1,
-			category: null,
-			field: null,
-			skill: [],
-			role: [],
-			tag: [],
-			keyword: '',
-			course: null,
-			professor: null,
-		});
-	};
 
 	const onClickMy = () => {
 		if (!isLogin) {
@@ -58,34 +35,10 @@ const Header = () => {
 	};
 
 	const handleLogoClick = () => {
-		if (!isLogin) {
-			navigate('/');
-			return;
-		}
-
-		navigate('/campus');
-		setFilterState({
-			scope: 2,
-			category: null,
-			field: null,
-			skill: [],
-			role: [],
-			tag: [],
-			keyword: '',
-			course: null,
-			professor: null,
-		});
+		navigate('/');
 	};
 
 	useOutsideClick(dropdownRef, openDrop, setOpenDrop);
-
-	useEffect(() => {
-		if (location.pathname === '/') {
-			setIsHere({ recruit: true, mySchool: false, inform: false });
-		} else {
-			setIsHere({ recruit: false, mySchool: false, inform: false });
-		}
-	}, [location.pathname, id]);
 
 	return (
 		<S.Header $isLogin={isLogin}>
@@ -101,14 +54,6 @@ const Header = () => {
 							alt='logo_typo'
 						/>
 						{isLogin && <span className='university'>{userInfo?.university}</span>}
-					</div>
-					<div className='header__navigation'>
-						<div
-							className={`header__navigation--navi-text ${isHere.recruit ? 'here' : ''}`}
-							onClick={handleRecruitBoardButtonClick}
-						>
-							구인게시판
-						</div>
 					</div>
 				</section>
 				<section>

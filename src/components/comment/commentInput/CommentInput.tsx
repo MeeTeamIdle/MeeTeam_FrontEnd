@@ -66,13 +66,13 @@ const CommentInput = () => {
 						<textarea
 							value={contents}
 							onChange={onChangeHandler}
-							maxLength={1000}
-							placeholder='댓글을 입력해주세요. 댓글의 글자 수는 1000자로 제한합니다.'
+							maxLength={100}
+							placeholder='댓글을 입력해주세요. 댓글의 글자 수는 100자로 제한합니다.'
 						/>
 					</section>
 					<section className='container-length_counter'>
 						<span className='body2-medium'>
-							{contents.length > 1000 ? 1000 : contents.length}/1000
+							{contents.length > 100 ? 100 : contents.length}/100
 						</span>
 					</section>
 					<section className='container-btn'>

@@ -12,8 +12,8 @@ import {
 	DropdownDetail,
 	ClearConditions,
 	SearchBar,
-	FieldPopup,
 	RecruitCard,
+	CampusToggle,
 } from '../../../components';
 import S from './RecruitPage.styled';
 import { FilledBookmark } from '../../../assets';
@@ -63,13 +63,6 @@ const RecruitPage = () => {
 	const [isDetailSelected, setIsDetailSelected] = useState(false);
 	const [isFloatingOpen, setIsFloatingOpen] = useState<boolean>(false);
 	const [placeholderText, setPlaceholderText] = useState('제목을 검색해보세요.');
-	const [fieldValue, setFieldValue] = useState({
-		applied: false,
-		value: {
-			id: null as number | null,
-			value: '분야를 선택해주세요',
-		},
-	});
 	const [isOpenDetail, setIsOpenDetail] = useState({
 		skill: true,
 		role: false,
@@ -103,22 +96,6 @@ const RecruitPage = () => {
 	const onClickDetailed = (event: React.MouseEvent) => {
 		event.stopPropagation();
 		setIsOpen(prev => !prev);
-	};
-
-	const handleFieldMenu = (event: React.MouseEvent<HTMLSpanElement>) => {
-		const { innerText } = event.target as HTMLElement;
-		setFieldValue({
-			applied: false,
-			value: { id: Number(event.currentTarget.id), value: innerText },
-		});
-		searchParams.set('field', event.currentTarget.id);
-	};
-
-	const submitField = () => {
-		setFieldValue(prev => ({ ...prev, applied: true }));
-		setFilterState(prev => ({ ...prev, field: fieldValue.value.id }));
-		setIsFieldOpen(false);
-		setSearchParams(searchParams);
 	};
 
 	const onClickClear = useCallback(() => {
@@ -161,10 +138,6 @@ const RecruitPage = () => {
 		setIsOpen(false);
 	};
 
-	const handleFieldPopup = () => {
-		setIsFieldOpen(prev => !prev);
-	};
-
 	const onClickDetails = (event: React.MouseEvent<HTMLSpanElement>) => {
 		event.stopPropagation();
 		const { innerText } = event.target as HTMLElement;
@@ -193,13 +166,6 @@ const RecruitPage = () => {
 		if (event.target.value.length === 0) {
 			onClickDeleteKeyword();
 		}
-	};
-
-	const handleFieldClear = () => {
-		setFilterState(prev => ({ ...prev, field: null }));
-		setFieldValue({ applied: false, value: { id: null, value: '분야를 선택해주세요' } });
-		searchParams.delete('field');
-		setSearchParams(searchParams);
 	};
 
 	const onClickDeleteKeyword = () => {
@@ -358,16 +324,7 @@ const RecruitPage = () => {
 			<S.RecruitPage $isDetailedClick={isOpen}>
 				<MainBanner />
 				<section>
-					<FieldPopup
-						isOpen={isFieldOpen}
-						fieldRef={fieldRef}
-						fieldValue={fieldValue}
-						isFieldClick={fieldValue.value.value !== '분야를 선택해주세요'}
-						onClick={handleFieldPopup}
-						handleFieldMenu={handleFieldMenu}
-						handleFieldClear={handleFieldClear}
-						submitField={submitField}
-					/>
+					<CampusToggle />
 					<section className='wrapper-filters'>
 						<section className='container-filters'>
 							<Dropdown
