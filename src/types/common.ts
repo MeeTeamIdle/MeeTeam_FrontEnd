@@ -1,6 +1,4 @@
 export interface ResponsiveProps {
-	$isMobilePort?: boolean;
-	$isTabletPort?: boolean;
-	$isMobileLand?: boolean;
-	$isTabletLand?: boolean;
+	$isMobile?: boolean;
+	$isTablet?: boolean;
 }
