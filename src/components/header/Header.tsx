@@ -13,7 +13,6 @@ const Header = () => {
 	const navigate = useNavigate();
 
 	const [openDrop, setOpenDrop] = useState<boolean>(false);
-
 	const [userInfo, setUserState] = useRecoilState(userState);
 
 	const setLoginState = useSetRecoilState(loginState);

@@ -11,11 +11,12 @@ const CampusToggle = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const { isLogin } = useLogin();
-	const setFilterState = useSetRecoilState(recruitFilterState);
-	const setFilterStateAuth = useSetRecoilState(recruitFilterStateAuth);
 
 	const [isCampus, setIsCampus] = useState<boolean>(false);
 	const [needLoginModal, setNeedLoginModal] = useRecoilState(needLoginModalState);
+
+	const setFilterState = useSetRecoilState(recruitFilterState);
+	const setFilterStateAuth = useSetRecoilState(recruitFilterStateAuth);
 
 	const handleCampusOutClick = () => {
 		navigate('/');
@@ -69,13 +70,13 @@ const CampusToggle = () => {
 					className={`wrapper ${isCampus ? 'notSelected' : 'selected'}`}
 					onClick={handleCampusOutClick}
 				>
-					<span className='h3'>교외</span>
+					<span className='h3 option'>교외</span>
 				</article>
 				<article
 					className={`wrapper ${isCampus ? 'selected' : 'notSelected'}`}
 					onClick={handleCampusInClick}
 				>
-					<span className='h3'>교내</span>
+					<span className='h3 option'>교내</span>
 				</article>
 			</S.CampusToggle>
 			{needLoginModal.isOpen && (
