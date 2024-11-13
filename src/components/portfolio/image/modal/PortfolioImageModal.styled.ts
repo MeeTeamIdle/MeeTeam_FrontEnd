@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { ResponsiveProps } from '../../../../types';
 
 const PortfolioImageModalLayout = styled.div`
 	position: fixed;
@@ -81,20 +82,32 @@ const PortfolioImageItem = styled.li`
 	background: var(--Form-fill-others, #fff);
 `;
 
-const PortfolioImageListIcon = styled.span`
+const PortfolioImageListIcon = styled.span<ResponsiveProps>`
 	display: flex;
 	padding: 1.6rem;
 	align-items: center;
 	height: 100%;
 	border-right: 0.1rem solid var(--box_stroke, #e3e3e3);
+
+	${props =>
+		props.$isMobile &&
+		`
+		padding: 0.8rem;
+		`}
 `;
 
-const PortfolioImageWrapper = styled.div`
+const PortfolioImageWrapper = styled.div<ResponsiveProps>`
 	display: flex;
 	width: 10rem;
 	flex-direction: row;
 	margin: 1.6rem;
 	align-items: center;
+
+	${props =>
+		props.$isMobile &&
+		`
+		margin: 0.8rem;
+		`}
 `;
 
 const PortfolioImageModalRow = styled.div<{ $gap?: string }>`
@@ -122,7 +135,7 @@ const PortfolioImageTitle = styled.span`
 	-webkit-box-orient: vertical;
 `;
 
-const PortfolioImageNumberIcon = styled.span`
+const PortfolioImageNumberIcon = styled.span<ResponsiveProps>`
 	box-sizing: border-box;
 	display: flex;
 	justify-content: center;
@@ -138,6 +151,13 @@ const PortfolioImageNumberIcon = styled.span`
 	font-weight: 600;
 	line-height: 2.4rem;
 	letter-spacing: 0.0032rem;
+
+	${props =>
+		props.$isMobile &&
+		`
+		margin: 0;
+		margin-right: 0.8rem;
+		`}
 `;
 
 const S = {

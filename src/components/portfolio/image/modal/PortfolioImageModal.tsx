@@ -5,6 +5,7 @@ import { PortfolioCard, PrimaryBtn, DefaultBtn } from '../../..';
 import { useRecoilState } from 'recoil';
 import { uploadImageListState } from '../../../../atom';
 import { HambergerMenuIcon } from '../../../../assets';
+import { useCheckDevice } from '../../../../hooks';
 
 const PortfolioImageModal = ({ onClose }: { onClose: () => void }) => {
 	const [uploadImageList, setUploadImageList] = useRecoilState(uploadImageListState);
@@ -24,6 +25,9 @@ const PortfolioImageModal = ({ onClose }: { onClose: () => void }) => {
 
 		setChangeImageList(_items);
 	};
+
+	// 반응형
+	const { isMobile } = useCheckDevice();
 
 	// --- requestAnimationFrame 초기화
 	const [enabled, setEnabled] = useState(false);
@@ -63,20 +67,24 @@ const PortfolioImageModal = ({ onClose }: { onClose: () => void }) => {
 															{...provided.draggableProps}
 															{...provided.dragHandleProps}
 														>
-															<S.PortfolioImageListIcon>
+															<S.PortfolioImageListIcon $isMobile={isMobile}>
 																<img src={HambergerMenuIcon} alt='햄버거메뉴아이콘' />
 															</S.PortfolioImageListIcon>
 															<S.PortfolioImageModalRow>
-																<S.PortfolioImageWrapper>
+																<S.PortfolioImageWrapper $isMobile={isMobile}>
 																	<PortfolioCard
 																		key={index}
 																		mainImageUrl={url}
 																		clickNumber={index + 1}
 																	/>
 																</S.PortfolioImageWrapper>
-																<S.PortfolioImageTitle>{fileName}</S.PortfolioImageTitle>
+																{!isMobile && (
+																	<S.PortfolioImageTitle>{fileName}</S.PortfolioImageTitle>
+																)}
 															</S.PortfolioImageModalRow>
-															<S.PortfolioImageNumberIcon>{index + 1}</S.PortfolioImageNumberIcon>
+															<S.PortfolioImageNumberIcon $isMobile={isMobile}>
+																{index + 1}
+															</S.PortfolioImageNumberIcon>
 														</S.PortfolioImageItem>
 													)}
 												</Draggable>
@@ -90,7 +98,7 @@ const PortfolioImageModal = ({ onClose }: { onClose: () => void }) => {
 				</DragDropContext>
 				<S.PortfolioImageModalRow $gap='1.6rem'>
 					<div>
-						<DefaultBtn title='취소하기' type='button' handleClick={onClose} />
+						<DefaultBtn title='취소' type='button' handleClick={onClose} />
 					</div>
 					<div>
 						<PrimaryBtn title='저장' type='button' handleClick={orderImageList} />
