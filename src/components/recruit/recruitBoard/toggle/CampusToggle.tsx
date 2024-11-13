@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import S from './CampusToggle.styled';
-import { useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
-import { recruitFilterState, recruitFilterStateAuth } from '../../../../atom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { needLoginModalState, recruitFilterState, recruitFilterStateAuth } from '../../../../atom';
 import { useLogin } from '../../../../hooks';
+import ModalBackground from '../../../modalBackground/ModalBackground';
+import NeedLogin from '../../recruitDetail/modal/needLogin/NeedLogin';
 
 const CampusToggle = () => {
+	const location = useLocation();
 	const navigate = useNavigate();
 	const { isLogin } = useLogin();
 	const setFilterState = useSetRecoilState(recruitFilterState);
 	const setFilterStateAuth = useSetRecoilState(recruitFilterStateAuth);
 
 	const [isCampus, setIsCampus] = useState<boolean>(false);
+	const [needLoginModal, setNeedLoginModal] = useRecoilState(needLoginModalState);
 
 	const handleCampusOutClick = () => {
 		navigate('/');
@@ -31,7 +35,7 @@ const CampusToggle = () => {
 
 	const handleCampusInClick = () => {
 		if (!isLogin) {
-			navigate('/signin');
+			setNeedLoginModal({ isOpen: true, type: 'SCHOOL_RECRUIT' });
 			return;
 		}
 
@@ -50,21 +54,36 @@ const CampusToggle = () => {
 		setIsCampus(true);
 	};
 
+	useEffect(() => {
+		if (location.pathname === '/campus') {
+			setIsCampus(true);
+		} else {
+			setIsCampus(false);
+		}
+	}, [location.pathname]);
+
 	return (
-		<S.CampusToggle>
-			<article
-				className={`wrapper ${isCampus ? 'notSelected' : 'selected'}`}
-				onClick={handleCampusOutClick}
-			>
-				<span className='h3'>교외</span>
-			</article>
-			<article
-				className={`wrapper ${isCampus ? 'selected' : 'notSelected'}`}
-				onClick={handleCampusInClick}
-			>
-				<span className='h3'>교내</span>
-			</article>
-		</S.CampusToggle>
+		<>
+			<S.CampusToggle>
+				<article
+					className={`wrapper ${isCampus ? 'notSelected' : 'selected'}`}
+					onClick={handleCampusOutClick}
+				>
+					<span className='h3'>교외</span>
+				</article>
+				<article
+					className={`wrapper ${isCampus ? 'selected' : 'notSelected'}`}
+					onClick={handleCampusInClick}
+				>
+					<span className='h3'>교내</span>
+				</article>
+			</S.CampusToggle>
+			{needLoginModal.isOpen && (
+				<ModalBackground>
+					<NeedLogin type={needLoginModal.type} />
+				</ModalBackground>
+			)}
+		</>
 	);
 };
 

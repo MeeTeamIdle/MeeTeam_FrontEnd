@@ -6,7 +6,6 @@ const CampusToggle = styled.section`
 	align-items: center;
 	width: 218px;
 	height: 60px;
-	flex-shrink: 0;
 	border-radius: 999px;
 	border: 0.75px solid #f6f6f6;
 	background: #f8fafb;
@@ -19,7 +18,6 @@ const CampusToggle = styled.section`
 		align-items: center;
 		width: 88px;
 		height: 40px;
-		flex-shrink: 0;
 		border-radius: 99999px;
 	}
 
