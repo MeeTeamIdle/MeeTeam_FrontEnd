@@ -33,7 +33,6 @@ import { useOutsideClick } from './useOutsideClick';
 import { useFocusToTop } from './useFocusOnTop';
 import { useFixModalBackground } from './useFixModalBackground';
 import useCheckDevice from './useCheckDevice';
-import { useResponsiveWeb } from './useResponsiveWeb';
 
 export {
 	useCheckExist,
@@ -70,5 +69,4 @@ export {
 	useFocusToTop,
 	useFixModalBackground,
 	useCheckDevice,
-	useResponsiveWeb,
 };
