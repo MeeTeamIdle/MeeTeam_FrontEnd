@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import ReactQuill from 'react-quill';
+import { ResponsiveProps } from '../../../types';
 
-interface PortfolioBoxStyle {
+interface PortfolioBoxStyle extends ResponsiveProps {
 	$gap?: string;
 	$width?: string;
 }
@@ -75,6 +76,16 @@ const PortfolioEditRow = styled.div<PortfolioBoxStyle>`
 	/* 반응형 대비 */
 	flex-wrap: wrap;
 	row-gap: ${props => props.$gap};
+
+	${props =>
+		(props.$isTablet || props.$isMobile) &&
+		`flex-direction: column;
+			row-gap: 1.2rem;
+			button {
+				margin-left: 0;
+				margin-right: auto;
+			}
+		`}
 `;
 
 const PortfolioEditHeader = styled.header`

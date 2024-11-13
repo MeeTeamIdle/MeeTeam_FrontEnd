@@ -61,6 +61,7 @@ import type { JsxElementComponentProps, StringElementProps } from './indexSignit
 import type { Search } from './search';
 import type { Portfolio, PortfolioDetails } from './portfolio';
 import type { Image, BlobFile } from './image';
+import type { ResponsiveProps } from './common';
 
 export type {
 	SignUpPayload,
@@ -129,4 +130,5 @@ export type {
 	ManageListResult,
 	RecruitApplicant,
 	RecruitApplicantsList,
+	ResponsiveProps,
 };

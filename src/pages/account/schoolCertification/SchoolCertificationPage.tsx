@@ -7,6 +7,7 @@ import {
 	useReadUniversityList,
 	useReadDepartmentList,
 	useDebounce,
+	useCheckDevice,
 } from '../../../hooks';
 import { ComboBox } from '../../../components';
 import { useForm, SubmitHandler, Path } from 'react-hook-form';
@@ -48,7 +49,6 @@ const SchoolCertificationPage = () => {
 		register,
 		handleSubmit,
 		setValue,
-		control,
 		getValues,
 		watch,
 		formState: { isValid }, // 제거하면 watch 가 적용이 안되는 이슈 존재
@@ -137,10 +137,13 @@ const SchoolCertificationPage = () => {
 		setDisableSubmit(!checkExistDepartment || !getValues('email') || !isValid);
 	}, [department, email]);
 
+	/// 반응형
+	const { isMobile } = useCheckDevice();
+
 	return (
-		<S.SchoolCertificationLayout>
+		<S.SchoolCertificationLayout $isMobile={isMobile}>
 			<header className='account__header'>
-				<h1>학교 인증하고, 밋팀을 만나보세요!</h1>
+				<h1>{`학교 인증하고,\n밋팀을 만나보세요!`}</h1>
 				{next && (
 					<GoBack clickHandler={e => nextHandler(e)} style='left: -15.98rem; top: -5.53rem; ' />
 				)}

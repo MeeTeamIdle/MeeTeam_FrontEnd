@@ -20,6 +20,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray, SubmitHandler, SubmitErrorHandler } from 'react-hook-form';
 import { Image, Link, PortfolioPayload, Skill } from '../../../types';
 import {
+	useCheckDevice,
 	useCreatePortfolio,
 	useDebounce,
 	useReadImageListPresignedUrl,
@@ -57,7 +58,7 @@ const LABEL = {
 	image: `최소 한 장 이상의 이미지가 업로드 되어야하며 첫 번째 이미지가 메인 이미지가 됩니다.\n단, 한 장당 30MB 이하로 최대 15장까지 업로드 가능합니다.`,
 	content: `진행 했던 내용을 자유롭게 작성해주세요.`,
 };
-const PROCEED_TYPE = ['오프라인', '온라인', '상관없음'];
+const PROCEED_TYPE = ['오프라인', '온라인', '온/오프라인'];
 
 const PortfolioEditPage = () => {
 	const { portfolioId } = useParams() as { portfolioId: string }; // undefined 인 경우(생성하는 경우) 로직 필요
@@ -313,13 +314,15 @@ const PortfolioEditPage = () => {
 		},
 	});
 
+	// 반응형
+	const { isMobile, isTablet } = useCheckDevice();
+
 	if (isSuccessReadPortfolio && portfolioId && !portfolio?.isWriter) {
 		return <NotFound />;
 	}
 
 	return (
 		<>
-			(
 			<S.PortfolioEditLayout
 				onSubmit={handleSubmit(submitHandler, submitErrorHandler)}
 				onKeyDown={e => checkEnterKeyDown(e)}
@@ -337,7 +340,7 @@ const PortfolioEditPage = () => {
 						<S.PortfolioEditArticle>
 							<S.PortfolioEditTitle>슬라이드 이미지</S.PortfolioEditTitle>
 							<S.PortfolioEditColumn $width='clamp(50%, 76.4rem, 100%)' $gap='3.6rem'>
-								<S.PortfolioEditRow>
+								<S.PortfolioEditRow $isTablet={isTablet} $isMobile={isMobile}>
 									<S.PortfolioEditLabel $required={true}>{LABEL.image}</S.PortfolioEditLabel>
 									<PrimaryBtn
 										type='button'
@@ -417,7 +420,7 @@ const PortfolioEditPage = () => {
 															differenceInDays(
 																new Date(watch('endDate') as string),
 																new Date(startDate)
-															) >= 0 || '시작일을 종료일 이전으로 설정해주세요'
+															) >= 0 || '종료일 이전으로 설정해주세요'
 														);
 													}
 												},
@@ -435,7 +438,7 @@ const PortfolioEditPage = () => {
 															differenceInDays(
 																new Date(endDate),
 																new Date(watch('startDate') as string)
-															) >= 0 || '종료일을 시작일 이후로 설정해주세요'
+															) >= 0 || '시작일 이후로 설정해주세요'
 														);
 													}
 												},

@@ -7,6 +7,7 @@ interface ProfileImage {
 
 const ProfileImageLayout = styled.div`
 	position: relative;
+	width: fit-content;
 	display: flex;
 	cursor: pointer;
 `;
