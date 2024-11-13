@@ -94,6 +94,7 @@ import SearchBar from './recruit/recruitBoard/searchBar/SearchBar';
 import FieldPopup from './recruit/recruitBoard/fieldPopup/FieldPopup';
 import LoadingBackground from './loading/LoadingBackground';
 import TextBox from './dropdown/textBox/TextBox';
+import CampusToggle from './recruit/recruitBoard/toggle/CampusToggle';
 
 export {
 	Header,
@@ -192,4 +193,5 @@ export {
 	FieldPopup,
 	LoadingBackground,
 	TextBox,
+	CampusToggle,
 };

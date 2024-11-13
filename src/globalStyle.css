@@ -1,3 +1,5 @@
+@import url('/src/styles/fonts/font.css');
+
 html {
 	font-size: 62.5%;
 	font-family: Pretendard;
@@ -193,4 +195,48 @@ button {
 	font-weight: 600;
 	line-height: 2.4rem;
 	letter-spacing: 0.004rem;
+}
+
+@font-face {
+	font-family: 'Noto Sans CJK KR';
+	font-style: normal;
+	font-weight: 100;
+	font-display: swap;
+	src:
+		url('styles/fonts/NotoSansKR-Light.woff2') format('woff2'),
+		url('styles/fonts/NotoSansKR-Light.woff') format('woff'),
+		url('styles/fonts/NotoSansKR-Light.otf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Noto Sans CJK KR';
+	font-style: normal;
+	font-weight: normal;
+	font-display: swap;
+	src:
+		url('styles/fonts/NotoSansKR-Regular.woff2') format('woff2'),
+		url('styles/fonts/NotoSansKR-Regular.woff') format('woff'),
+		url('styles/fonts/NotoSansKR-Regular.otf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Noto Sans CJK KR';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src:
+		url('styles/fonts/NotoSansKR-Medium.woff2') format('woff2'),
+		url('styles/fonts/NotoSansKR-Medium.woff') format('woff'),
+		url('styles/fonts/NotoSansKR-Medium.otf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Noto Sans CJK KR';
+	font-style: normal;
+	font-weight: bold;
+	font-display: swap;
+	src:
+		url('styles/fonts/NotoSansKR-Bold.woff2') format('woff2'),
+		url('styles/fonts/NotoSansKR-Bold.woff') format('woff'),
+		url('styles/fonts/NotoSansKR-Bold.otf') format('truetype');
 }
