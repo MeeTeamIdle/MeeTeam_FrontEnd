@@ -2,14 +2,14 @@ import React from 'react';
 import S from './LinkDetails.styled';
 import { Link } from '../../../types';
 import { Clip } from '../../../assets';
-import { useResponsiveWeb } from '../../../hooks';
+import { useCheckDevice } from '../../../hooks';
 
 const LinkDetails = ({ url, description }: Link) => {
 	// 반응형
-	const [isMobilePort, isTabletPort] = useResponsiveWeb();
+	const { isMobile, isTablet } = useCheckDevice();
 
 	return (
-		<S.LinkDetailsLayout $isTabletPort={isTabletPort} $isMobilePort={isMobilePort}>
+		<S.LinkDetailsLayout $isTablet={isTablet} $isMobile={isMobile}>
 			<h4>{description}</h4>
 			<div>
 				<img src={Clip} alt='링크 아이콘' />

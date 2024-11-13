@@ -20,13 +20,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray, SubmitHandler, SubmitErrorHandler } from 'react-hook-form';
 import { Image, Link, PortfolioPayload, Skill } from '../../../types';
 import {
+	useCheckDevice,
 	useCreatePortfolio,
 	useDebounce,
 	useReadImageListPresignedUrl,
 	useReadPortfolio,
 	useReadRoleList,
 	useReadSkillList,
-	useResponsiveWeb,
 	useUpdatePortfolio,
 	useUploadImageFile,
 } from '../../../hooks';
@@ -315,7 +315,7 @@ const PortfolioEditPage = () => {
 	});
 
 	// 반응형
-	const [isMobilePort, isTabletPort] = useResponsiveWeb();
+	const { isMobile, isTablet } = useCheckDevice();
 
 	if (isSuccessReadPortfolio && portfolioId && !portfolio?.isWriter) {
 		return <NotFound />;
@@ -323,7 +323,6 @@ const PortfolioEditPage = () => {
 
 	return (
 		<>
-			(
 			<S.PortfolioEditLayout
 				onSubmit={handleSubmit(submitHandler, submitErrorHandler)}
 				onKeyDown={e => checkEnterKeyDown(e)}
@@ -341,7 +340,7 @@ const PortfolioEditPage = () => {
 						<S.PortfolioEditArticle>
 							<S.PortfolioEditTitle>슬라이드 이미지</S.PortfolioEditTitle>
 							<S.PortfolioEditColumn $width='clamp(50%, 76.4rem, 100%)' $gap='3.6rem'>
-								<S.PortfolioEditRow $isTabletPort={isTabletPort} $isMobilePort={isMobilePort}>
+								<S.PortfolioEditRow $isTablet={isTablet} $isMobile={isMobile}>
 									<S.PortfolioEditLabel $required={true}>{LABEL.image}</S.PortfolioEditLabel>
 									<PrimaryBtn
 										type='button'

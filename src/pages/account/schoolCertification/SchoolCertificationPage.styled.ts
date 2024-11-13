@@ -4,7 +4,7 @@ import { ResponsiveProps } from '../../../types';
 
 const SchoolCertificationLayout = styled(Account.AccountLayout)<ResponsiveProps>`
 	${props =>
-		props.$isMobilePort &&
+		props.$isMobile &&
 		`
 			white-space: pre-wrap;
 		`}

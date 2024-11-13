@@ -28,7 +28,7 @@ const LinkDetailsLayout = styled.div<ResponsiveProps>`
 	}
 
 	${props =>
-		(props.$isTabletPort || props.$isMobilePort) &&
+		(props.$isTablet || props.$isMobile) &&
 		`flex-direction: column;
 			row-gap: 0.6rem;
 		`}

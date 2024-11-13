@@ -7,7 +7,7 @@ import {
 	useReadUniversityList,
 	useReadDepartmentList,
 	useDebounce,
-	useResponsiveWeb,
+	useCheckDevice,
 } from '../../../hooks';
 import { ComboBox } from '../../../components';
 import { useForm, SubmitHandler, Path } from 'react-hook-form';
@@ -138,10 +138,10 @@ const SchoolCertificationPage = () => {
 	}, [department, email]);
 
 	/// 반응형
-	const [isMobilePort] = useResponsiveWeb();
+	const { isMobile } = useCheckDevice();
 
 	return (
-		<S.SchoolCertificationLayout $isMobilePort={isMobilePort}>
+		<S.SchoolCertificationLayout $isMobile={isMobile}>
 			<header className='account__header'>
 				<h1>{`학교 인증하고,\n밋팀을 만나보세요!`}</h1>
 				{next && (

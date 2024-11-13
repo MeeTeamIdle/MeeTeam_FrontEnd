@@ -42,7 +42,7 @@ const PortfolioInformationRow = styled.div<PortfolioBoxStyle>`
 	row-gap: ${props => props.$gap};
 
 	${props =>
-		props.$isMobilePort &&
+		props.$isMobile &&
 		`flex-direction: column;
 			row-gap: 0.8rem;
 		`}

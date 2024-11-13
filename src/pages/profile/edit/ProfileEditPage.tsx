@@ -33,7 +33,7 @@ import {
 	useUploadImageFile,
 	useReadImagePresignedUrl,
 	useCheckDuplicateNickname,
-	useResponsiveWeb,
+	useCheckDevice,
 } from '../../../hooks';
 import { useNavigate } from 'react-router-dom';
 import { useReadInfinitePortfolioList } from '../../../hooks/usePortfolio';
@@ -390,12 +390,12 @@ const ProfileEditPage = () => {
 	});
 
 	// 반응형
-	const [isMobilePort, isTabletPort] = useResponsiveWeb();
+	const { isMobile, isTablet } = useCheckDevice();
 
 	return (
 		<>
 			<S.ProfileLayout onSubmit={handleSubmit(submitHandler)} onKeyDown={e => checkEnterKeyDown(e)}>
-				<S.ProfileHeader $isTabletPort={isTabletPort} $isMobilePort={isMobilePort}>
+				<S.ProfileHeader $isTablet={isTablet} $isMobile={isMobile}>
 					<ProfileImage
 						isEditable={true}
 						userId={user?.nickname as string}
@@ -406,8 +406,8 @@ const ProfileEditPage = () => {
 						<S.ProfileRow
 							$width='clamp(50%, 50.8rem, 100%)'
 							$gap='1rem'
-							$isTabletPort={isTabletPort}
-							$isMobilePort={isMobilePort}
+							$isTablet={isTablet}
+							$isMobile={isMobile}
 						>
 							<Input
 								// defaultValue={user?.nickname}
@@ -575,12 +575,7 @@ const ProfileEditPage = () => {
 						<AddFormBtn title='수상/활동 추가' handleClick={() => addAward()} />
 						<S.ProfileColumn $gap='3.6rem'>
 							{awards?.map((award, index) => (
-								<S.ProfileRow
-									key={award.id}
-									$gap='1rem'
-									$isTabletPort={isTabletPort}
-									$isMobilePort={isMobilePort}
-								>
+								<S.ProfileRow key={award.id} $gap='1rem' $isTablet={isTablet} $isMobile={isMobile}>
 									<S.ProfileColumn $gap='2rem'>
 										<S.ProfileRow $gap='1rem'>
 											<MuiDatepickerController

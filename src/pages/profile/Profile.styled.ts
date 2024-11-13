@@ -115,7 +115,7 @@ const ProfileHeader = styled.header<ResponsiveProps>`
 		right: 0;
 		top: 0;
 	}
-	${props => (props.$isTabletPort || props.$isMobilePort) && 'flex-direction: column'}
+	${props => (props.$isTablet || props.$isMobile) && 'flex-direction: column'}
 `;
 
 const ProfileArticle = styled.article`
@@ -136,7 +136,7 @@ const ProfileColumn = styled.div<ProfileBoxStyle>`
 	width: ${props => props.$width};
 
 	${props =>
-		(props.$isTabletPort || props.$isMobilePort) &&
+		(props.$isTablet || props.$isMobile) &&
 		`
 			row-gap: 1.2rem;
 		`}
@@ -154,7 +154,7 @@ const ProfileRow = styled.div<ProfileBoxStyle>`
 	row-gap: ${props => props.$gap};
 
 	${props =>
-		(props.$isTabletPort || props.$isMobilePort) &&
+		(props.$isTablet || props.$isMobile) &&
 		`flex-direction: column;
 			row-gap: 2.4rem;
 		`}

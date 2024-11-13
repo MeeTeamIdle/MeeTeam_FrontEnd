@@ -87,7 +87,7 @@ const PortfolioDetailsHeader = styled.header<ResponsiveProps>`
 	}
 
 	${props =>
-		(props.$isTabletPort || props.$isMobilePort) &&
+		(props.$isTablet || props.$isMobile) &&
 		`
 			flex-direction: column;
 			row-gap: 1.6rem;
@@ -192,7 +192,7 @@ const PortfolioDetailsButtonContainer = styled.div<ResponsiveProps>`
 	column-gap: 1.4rem;
 
 	${props =>
-		props.$isTabletPort || props.$isMobilePort
+		props.$isTablet || props.$isMobile
 			? `
 			margin-right: auto;
 		`

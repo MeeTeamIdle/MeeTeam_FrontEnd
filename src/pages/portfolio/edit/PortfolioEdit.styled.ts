@@ -78,7 +78,7 @@ const PortfolioEditRow = styled.div<PortfolioBoxStyle>`
 	row-gap: ${props => props.$gap};
 
 	${props =>
-		(props.$isTabletPort || props.$isMobilePort) &&
+		(props.$isTablet || props.$isMobile) &&
 		`flex-direction: column;
 			row-gap: 1.2rem;
 			button {

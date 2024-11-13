@@ -11,7 +11,7 @@ import {
 	ModalPortal,
 } from '../../../components';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useReadPortfolio, useDeletePortfolio, useResponsiveWeb } from '../../../hooks';
+import { useReadPortfolio, useDeletePortfolio, useCheckDevice } from '../../../hooks';
 import { Image, BlobFile } from '../../../types';
 import { addClassToEmptyPTags, fixModalBackground, unzipFile } from '../../../utils';
 import { useRecoilState } from 'recoil';
@@ -110,22 +110,19 @@ const PortfolioDetailsPage = () => {
 	};
 
 	// 반응형
-	const [isMobilePort, isTabletPort] = useResponsiveWeb();
+	const { isMobile, isTablet } = useCheckDevice();
 
 	return (
 		isSuccess && (
 			<S.PortfolioDetailsLayout>
 				<S.PortfolioDetailsContainer>
-					<S.PortfolioDetailsHeader $isTabletPort={isTabletPort} $isMobilePort={isMobilePort}>
+					<S.PortfolioDetailsHeader $isTablet={isTablet} $isMobile={isMobile}>
 						<S.PortfolioDetailsColumn $gap='1rem'>
 							<h1>{portfolio?.title}</h1>
 							<h5>{portfolio?.description}</h5>
 						</S.PortfolioDetailsColumn>
 						{portfolio?.isWriter && (
-							<S.PortfolioDetailsButtonContainer
-								$isTabletPort={isTabletPort}
-								$isMobilePort={isMobilePort}
-							>
+							<S.PortfolioDetailsButtonContainer $isTablet={isTablet} $isMobile={isMobile}>
 								<IconBtn icon={TrashCan} handleClick={handleDeletePortfoilo} />
 								{modalOpen && (
 									<ModalPortal>

@@ -7,7 +7,7 @@ import {
 	ProfileImage,
 	SkillTag,
 } from '../../../components';
-import { useReadProfile, useResponsiveWeb } from '../../../hooks';
+import { useCheckDevice, useReadProfile } from '../../../hooks';
 import { useParams, useNavigate } from 'react-router';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../../../atom';
@@ -38,12 +38,12 @@ const ProfileDetailsPage = () => {
 		: user?.subEmail?.isPublic;
 
 	// 반응형
-	const [isMobilePort, isTabletPort] = useResponsiveWeb();
+	const { isMobile, isTablet } = useCheckDevice();
 
 	return (
 		isSuccess && (
 			<S.ProfileLayout>
-				<S.ProfileHeader $isTabletPort={isTabletPort} $isMobilePort={isMobilePort}>
+				<S.ProfileHeader $isTablet={isTablet} $isMobile={isMobile}>
 					<ProfileImage userId={userId} size='14rem' url={user?.imageUrl} />
 					<S.ProfileColumn>
 						<div className='profile-header__row'>
@@ -194,7 +194,7 @@ const ProfileDetailsPage = () => {
 
 					<S.ProfileArticle>
 						<S.ProfileTitle>링크</S.ProfileTitle>
-						<S.ProfileColumn $isTabletPort={isTabletPort} $isMobilePort={isMobilePort}>
+						<S.ProfileColumn $isTablet={isTablet} $isMobile={isMobile}>
 							{user?.links?.map((link, index) => (
 								<S.ProfileRow key={index} $gap='3.65rem'>
 									<LinkDetails {...link} />
