@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { ResponsiveProps } from '../../../types';
 
-interface PortfolioBoxStyle {
+interface PortfolioBoxStyle extends ResponsiveProps {
 	$gap?: string;
 	$width?: string;
 }
@@ -75,7 +76,8 @@ const PortfolioDetailsTitle = styled.h3`
 	margin-bottom: 1.2rem;
 `;
 
-const PortfolioDetailsHeader = styled.header`
+const PortfolioDetailsHeader = styled.header<ResponsiveProps>`
+	position: relative;
 	display: flex;
 	margin-top: 7.4rem;
 	margin-bottom: 2.7rem;
@@ -83,6 +85,13 @@ const PortfolioDetailsHeader = styled.header`
 	h1 {
 		color: var(--Text-textColor1, var(--text-color, #151515));
 	}
+
+	${props =>
+		(props.$isTablet || props.$isMobile) &&
+		`
+			flex-direction: column;
+			row-gap: 1.6rem;
+		`}
 `;
 
 const PortfolioDetailsArticle = styled.article`
@@ -118,6 +127,7 @@ const PortfolioDetailsContent = styled.article`
 	padding: 0 clamp(5%, 9.8rem, 8%);
 	font-weight: 500;
 	white-space: pre-wrap; // 줄바꿈
+	word-wrap: break-word;
 
 	/* 상세 내용 스타일링 */
 	.empty-p {
@@ -176,11 +186,17 @@ const PortfolioDetailsContent = styled.article`
 	}
 `;
 
-const PortfolioDetailsButtonContainer = styled.div`
+const PortfolioDetailsButtonContainer = styled.div<ResponsiveProps>`
 	display: flex;
 	flex-direction: row;
 	column-gap: 1.4rem;
-	margin-left: auto;
+
+	${props =>
+		props.$isTablet || props.$isMobile
+			? `
+			margin-right: auto;
+		`
+			: `margin-left: auto;`}
 `;
 
 const S = {

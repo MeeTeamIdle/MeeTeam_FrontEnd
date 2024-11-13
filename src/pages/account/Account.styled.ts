@@ -27,6 +27,9 @@ const AccountLayout = styled.div`
 		font-weight: 700;
 		line-height: 3.6rem; /* 128.571% */
 		letter-spacing: 0.0056rem;
+
+		word-wrap: break-word;
+		text-align: center;
 	}
 `;
 
