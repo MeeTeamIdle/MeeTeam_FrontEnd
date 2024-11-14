@@ -85,10 +85,12 @@ const RecruitPage = () => {
 			{ filterState: location.pathname === '/' ? filterState : filterStateAuth, page },
 		],
 		queryFn: async () => {
-			if (location.pathname === '/') {
+			if (location.pathname === '/' && !isLogin) {
 				return await getPostList({ filterState, page });
 			} else if (location.pathname === '/campus') {
 				return await getAuthPostList({ filterState: filterStateAuth, page });
+			} else if (location.pathname === '/' && isLogin) {
+				return await getAuthPostList({ filterState, page });
 			}
 		},
 	});
