@@ -73,11 +73,12 @@ const RecruitPage = () => {
 	const [page, setPage] = useRecoilState<number>(pageState);
 	const [filterState, setFilterState] = useRecoilState(recruitFilterState);
 	const [filterStateAuth, setFilterStateAuth] = useRecoilState(recruitFilterStateAuth);
-	const setDetailedFilterState = useSetRecoilState(detailedFilterState);
-	const setPreviousLocationState = useSetRecoilState(previousLocationState);
 	const [needLoginModal, setNeedLoginModal] = useRecoilState(needLoginModalState);
 	const [signupModalOpen, setSignupModalOpen] = useRecoilState(signupModalState);
 	const [searchParams, setSearchParams] = useSearchParams();
+
+	const setDetailedFilterState = useSetRecoilState(detailedFilterState);
+	const setPreviousLocationState = useSetRecoilState(previousLocationState);
 
 	const { data: posts } = useQuery({
 		queryKey: [
