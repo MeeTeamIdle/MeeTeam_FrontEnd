@@ -1,7 +1,6 @@
 import Plus from './Plus.svg';
 import DropdownArrow from './DropdownArrow.svg';
 import SearchIcon from './SearchIcon.svg';
-import MeeteamLogo from './MeeteamLogo.svg';
 import XBtn from './XBtn.svg';
 import Reply from './Reply.svg';
 import DefaultProfileImage from './DefaultProfileImage.svg';
@@ -55,7 +54,6 @@ export {
 	Plus,
 	DropdownArrow,
 	SearchIcon,
-	MeeteamLogo,
 	XBtn,
 	Reply,
 	FilledBookmark,
