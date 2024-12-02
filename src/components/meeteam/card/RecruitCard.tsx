@@ -1,20 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import S from './Card.styled';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FilledBookmark, UnfilledBookmark } from '../../../assets';
 import { ProfileImage } from '../..';
-import { Post, StringElementProps } from '../../../types';
+import { Post } from '../../../types';
 import { useBookmark, useLogin } from '../../../hooks';
 import { useDelBookmark } from '../../../hooks/useBookMark';
 import { useSetRecoilState } from 'recoil';
 import { needLoginModalState } from '../../../atom';
-
-const PATH_OBJ: StringElementProps = {
-	'/': 'recruit_board',
-	'/management/bookmark': 'managementBookmark',
-	'/management/applied': 'managementApplied',
-	'/management/my-post': 'managementMyPost',
-};
 
 const RecruitCard = ({
 	id,
@@ -30,13 +23,12 @@ const RecruitCard = ({
 }: Post) => {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const [path, setPath] = useState('');
 	const { isLogin } = useLogin();
 	const { mutate: bookmarked } = useBookmark({
-		queryKey: path,
+		queryKey: location.pathname,
 	});
 	const { mutate: unBookmarked } = useDelBookmark({
-		queryKey: path,
+		queryKey: location.pathname,
 	});
 	const setNeedLoginModal = useSetRecoilState(needLoginModalState);
 	const extractDeadline = new Date(deadline);
@@ -64,13 +56,6 @@ const RecruitCard = ({
 			unBookmarked(Number(id));
 		}
 	};
-
-	useEffect(() => {
-		const currentPath = PATH_OBJ[location.pathname];
-		if (currentPath) {
-			setPath(currentPath);
-		}
-	}, [location.pathname]);
 
 	return (
 		<S.RecruitCard onClick={onClickContent} $isClosed={isClosed}>
