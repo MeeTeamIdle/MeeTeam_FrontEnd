@@ -57,7 +57,7 @@ const Comment = styled.li`
 				border: 1px solid #5877fc;
 				background: #f3f5ff;
 				color: #5877fc;
-				font-family: Pretendard;
+
 				font-size: 1rem;
 			}
 		}

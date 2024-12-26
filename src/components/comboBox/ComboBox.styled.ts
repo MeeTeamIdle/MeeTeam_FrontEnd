@@ -9,7 +9,7 @@ const ComboBoxLayout = styled.div<{ $width?: string }>`
 
 	h6 {
 		/* Body/body2/semibold */
-		font-family: Pretendard;
+
 		font-size: 1.4rem;
 		font-style: normal;
 		font-weight: 600;

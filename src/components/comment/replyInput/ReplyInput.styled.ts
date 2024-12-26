@@ -48,7 +48,7 @@ const ReplyInput = styled.section`
 				background: #fff;
 				box-sizing: border-box;
 				resize: none;
-				font-family: Pretendard;
+
 				outline: none;
 
 				&:focus {

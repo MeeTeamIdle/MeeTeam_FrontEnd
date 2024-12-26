@@ -1,0 +1,7 @@
+@font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url('./NotoSansKR-Regular.ttf') format('truetype');
+}

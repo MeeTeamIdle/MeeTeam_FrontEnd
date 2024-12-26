@@ -43,7 +43,7 @@ const OptionItem = styled.li`
 	cursor: pointer;
 
 	/* Body/body1/medium */
-	font-family: Pretendard;
+
 	font-size: 1.6rem;
 	font-style: normal;
 	font-weight: 500;
