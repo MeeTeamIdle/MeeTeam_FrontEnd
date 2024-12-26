@@ -1,11 +1,10 @@
 @import url('/src/assets/fonts/font.css');
 
-html {
+html,
+body {
 	font-size: 62.5%;
 	font-family: 'Noto Sans KR';
-	font-weight: normal;
 }
-body,
 div,
 span,
 applet,
