@@ -14,7 +14,7 @@ const NotFound = styled.article`
 	h1 {
 		color: #151515;
 		text-align: center;
-		font-family: Pretendard;
+
 		font-size: 2.8rem;
 		font-weight: 700;
 		line-height: 3.6rem;
@@ -23,7 +23,7 @@ const NotFound = styled.article`
 
 	.body1-semibold {
 		color: #373f41;
-		font-family: Pretendard;
+
 		font-size: 1.6rem;
 		font-weight: 600;
 		line-height: 1.9rem;
@@ -33,7 +33,7 @@ const NotFound = styled.article`
 
 	.txt-big {
 		color: #f7faff;
-		font-family: Pretendard;
+
 		font-size: 1.6rem;
 		line-height: 1.9rem;
 		letter-spacing: 0.0032rem;
@@ -58,7 +58,7 @@ const NotFound = styled.article`
 	}
 	.faq {
 		color: #373f41;
-		font-family: Pretendard;
+
 		font-size: 1.2rem;
 		line-height: 1.4rem;
 		letter-spacing: 0.0024rem;

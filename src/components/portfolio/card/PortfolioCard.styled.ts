@@ -83,7 +83,7 @@ const PortfolioCardTag = styled.span<{ $color?: string }>`
 	color: var(--Text-textColor1, var(--text-color, #151515));
 
 	/* Text/t2 */
-	font-family: Pretendard;
+
 	font-size: 1.2rem;
 	font-style: normal;
 	font-weight: 500;

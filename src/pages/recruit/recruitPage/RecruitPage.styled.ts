@@ -49,7 +49,7 @@ const RecruitPage = styled.div<RecruitPage>`
 
 	.nav-info {
 		color: #373f41;
-		font-family: Pretendard;
+
 		font-size: 1.4rem;
 		font-weight: 600;
 	}

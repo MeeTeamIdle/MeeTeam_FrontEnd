@@ -271,7 +271,6 @@ const Modal = styled.section<Modal>`
 			font-weight: 500;
 			line-height: 1.35rem;
 			letter-spacing: 0.015rem;
-			font-family: Pretendard;
 
 			&::placeholder {
 				color: #8e8e8e;
@@ -494,7 +493,7 @@ const FinalModal = styled.section`
 
 	.btn-txt-big {
 		color: #373f41;
-		font-family: Pretendard;
+
 		font-size: 1.6rem;
 		font-style: normal;
 		font-weight: 500;

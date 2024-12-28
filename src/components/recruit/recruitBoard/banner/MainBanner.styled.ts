@@ -12,7 +12,6 @@ const Banner = styled.section`
 	align-items: center;
 	padding: 0 11rem;
 	box-sizing: border-box;
-	font-family: Pretendard;
 
 	.container-title {
 		display: flex;

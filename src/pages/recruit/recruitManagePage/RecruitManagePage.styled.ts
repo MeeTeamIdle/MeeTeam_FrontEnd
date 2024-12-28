@@ -16,7 +16,7 @@ const RecruitManageWrapper = styled.div`
 		background-color: #ffffff;
 		z-index: 1;
 		font-size: 1.5rem;
-		font-family: Pretendard;
+
 		color: #151515;
 		margin-top: 25rem;
 	}
