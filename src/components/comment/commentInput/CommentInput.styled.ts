@@ -37,7 +37,7 @@ const CommentInput = styled.div`
 				background: #fff;
 				box-sizing: border-box;
 				resize: none;
-				font-family: Pretendard;
+
 				outline: none;
 
 				&:focus {

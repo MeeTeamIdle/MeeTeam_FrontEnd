@@ -29,7 +29,7 @@ const Modal = styled.article`
 
 	.body2-medium {
 		color: #373f41;
-		font-family: Pretendard;
+
 		font-size: 1.4rem;
 		text-align: center;
 	}

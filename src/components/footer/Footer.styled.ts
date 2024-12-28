@@ -9,7 +9,7 @@ const Footer = styled.article`
 		display: flex;
 		justify-content: space-between;
 		padding: 6.5rem 0;
-		font-family: Pretendard;
+
 		margin: 0 auto;
 	}
 
@@ -30,7 +30,7 @@ const Footer = styled.article`
 
 	.copyright {
 		color: #8e8e8e;
-		font-family: Pretendard;
+
 		font-size: 1.4rem;
 		line-height: 1.6rem;
 		letter-spacing: 0.0028rem;

@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 const AccountSettingStyled = styled.section`
-	font-family: Pretendard;
 	width: clamp(45%, 96rem, 75%);
 	margin: 0 auto;
 	margin-bottom: 14.4rem;
@@ -146,7 +145,7 @@ const AccountSettingStyled = styled.section`
 
 		span {
 			color: #8e8e8e;
-			font-family: Pretendard;
+
 			font-size: 1.6rem;
 			font-weight: 600;
 			line-height: 1.9rem;
@@ -173,7 +172,7 @@ const AccountSettingStyled = styled.section`
 
 	.txt-big {
 		color: #8e8e8e;
-		font-family: Pretendard;
+
 		font-size: 1.6rem;
 		font-style: normal;
 		font-weight: 500;

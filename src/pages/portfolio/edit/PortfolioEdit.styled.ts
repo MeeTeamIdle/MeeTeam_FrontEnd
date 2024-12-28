@@ -190,7 +190,7 @@ const PortfolioEditor = styled(ReactQuill)`
 		}
 
 		/* Body/body1/medium */
-		font-family: Pretendard;
+
 		font-size: 1.6rem;
 		font-style: normal;
 		font-weight: 500;

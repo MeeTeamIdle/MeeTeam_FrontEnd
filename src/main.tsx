@@ -5,7 +5,6 @@ import App from './App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { RecruitPage, SignInPage } from './pages/index.ts';
 import './globalStyle.css';
-import './styles/fonts/font.css';
 
 import { LoadingBackground } from './components/index.ts';
 
