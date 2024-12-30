@@ -89,6 +89,10 @@ const RecruitDetailPage = styled.section`
 			cursor: pointer;
 		}
 	}
+
+	@media (max-width: 600px) {
+		width: 90%;
+	}
 `;
 
 const Footer = styled.footer`
@@ -269,8 +273,6 @@ const Footer = styled.footer`
 	}
 
 	@media (max-width: 450px) {
-		padding: 0 1.6rem;
-
 		.btn-txt__big {
 			font-size: 1.4rem;
 		}
@@ -291,8 +293,6 @@ const Footer = styled.footer`
 	}
 
 	@media (max-width: 376px) {
-		padding: 0 1.6rem;
-
 		.btn-txt__big {
 			font-size: 1.2rem;
 		}
